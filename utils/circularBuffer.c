@@ -1,0 +1,244 @@
+#include <stdlib.h>
+#include <string.h>
+
+#include "circularBuffer.h"
+
+/*************************************************************************
+ ********************* Local Type/Constant definitions *******************
+ ************************************************************************/
+
+/*************************************************************************
+ *********************** Local variables declarations ********************
+ ************************************************************************/
+
+/*************************************************************************
+ *********************** Local function declarations *********************
+ ************************************************************************/
+
+/*************************************************************************
+ *********************** Public function definitions *********************
+ ************************************************************************/
+void cb_initStatic(circularBuffer_t *cb, void *array, size_t capacity, size_t size)
+{
+    cb->buffer = array;
+    cb->buffer_end = (char *)cb->buffer + capacity * size;
+    cb->capacity = capacity;
+    cb->count = 0;
+    cb->size = size;
+    cb->back = cb->buffer;
+    cb->front = cb->buffer;
+}
+
+void cb_init(circularBuffer_t *cb, size_t capacity, size_t size)
+{
+    cb->buffer = malloc(capacity * size);
+    cb->buffer_end = (char *)cb->buffer + capacity * size;
+    cb->capacity = capacity;
+    cb->count = 0;
+    cb->size = size;
+    cb->back = cb->buffer;
+    cb->front = cb->buffer;
+}
+
+void cb_free(circularBuffer_t *cb)
+{
+    free(cb->buffer);
+    cb->count = 0;
+    cb->size = 0;
+}
+
+bool cb_pushBack(circularBuffer_t *cb, const void *item)
+{
+    if(cb->count == cb->capacity)
+    {
+        return false;
+    }
+        
+    memcpy(cb->back, item, cb->size);
+    cb->back = (char*)cb->back + cb->size;
+    if(cb->back == cb->buffer_end)
+    {
+        cb->back = cb->buffer;
+    }
+    cb->count++;
+    
+    return true;
+}
+
+bool cb_pushBackOverwrite(circularBuffer_t * const cb, void * const item, void * const oldItem)
+{
+    bool isBufferFullBeforeAdd = false;
+
+    // Check if buffer is full
+    if(cb->count == cb->capacity)
+    {
+        isBufferFullBeforeAdd = true;
+        cb_popFront(cb, oldItem);
+        cb_pushBack(cb, item);
+    }
+    else
+    {
+        cb_pushBack(cb, item);
+    }
+
+    return isBufferFullBeforeAdd;
+}
+
+bool cb_pushFront(circularBuffer_t *cb, const void *item)
+{
+    if(cb->count == cb->capacity)
+    {
+        return false;
+    }
+    
+    cb->front = (char*)cb->front - cb->size;
+    if(cb->front < cb->buffer)
+    {
+        cb->front = (char*)cb->buffer_end - cb->size;
+    }
+    memcpy(cb->front, item, cb->size);
+    cb->count++;
+    
+    return true;
+}
+
+bool cb_pushFrontOverwrite(circularBuffer_t * const cb, void * const item, void * const oldItem)
+{
+    bool isBufferFullBeforeAdd = false;
+
+    // Check if buffer is full
+    if(cb->count == cb->capacity)
+    {
+        isBufferFullBeforeAdd = true;
+        cb_popFront(cb, oldItem);
+        cb_pushFront(cb, item);
+    }
+    else
+    {
+        cb_pushFront(cb, item);
+    }
+
+    return isBufferFullBeforeAdd;
+}
+
+bool cb_popBack(circularBuffer_t *cb, void *item)
+{
+    if(cb->count == 0)
+    {
+        return false;
+    }
+
+    cb->back = (char*)cb->back - cb->size;
+    if(cb->back < cb->buffer)  
+    {
+        cb->back = (char*)cb->buffer_end - cb->size;
+    }
+    
+    if(NULL != item)
+    {
+        memcpy(item, cb->back, cb->size);
+    }
+    cb->count--;
+        
+    return true;
+}
+
+bool cb_popFront(circularBuffer_t *cb, void *item)
+{
+    if(cb->count == 0)
+    {
+        return false;
+    }
+        
+    if(NULL != item)
+    {
+        memcpy(item, cb->front, cb->size);
+    }
+
+    cb->front = (char*)cb->front + cb->size;
+    if(cb->front == cb->buffer_end)  
+    {
+        cb->front = cb->buffer;
+    }
+    cb->count--;
+        
+    return true;
+}
+
+bool cb_peek(circularBuffer_t * const cb, size_t itemIndex, void * const item)
+{
+    char *copyPointer = cb->front;
+
+    if(itemIndex >= cb->count)
+    {
+        return false;
+    }
+
+    // calculate the address of the item
+    while(0 != itemIndex)
+    {
+        copyPointer += cb->size;
+        if(copyPointer == cb->buffer_end)
+        {
+            copyPointer = cb->buffer;
+        }
+        itemIndex--;
+    }
+
+    memcpy(item, copyPointer, cb->size);
+    return true;
+}
+    
+void cb_empty(circularBuffer_t *cb)
+{
+    cb->count = 0;
+    cb->back = cb->buffer;
+    cb->front = cb->buffer;
+}
+
+size_t cb_getItemCount(circularBuffer_t *cb)
+{
+    return cb->count;
+}
+
+size_t cb_getBufferArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array)
+{
+    char *copyPointer = cb->front;
+
+    // verify input parameter are corrects
+    if((startIndex >= cb->count) || ((nbOfItems + startIndex) > cb->count))
+    {
+        return false;
+    }
+
+    // calculate the address of the item
+    while(0 != startIndex)
+    {
+        copyPointer += cb->size;
+        if(copyPointer == cb->buffer_end)
+        {
+            copyPointer = cb->buffer;
+        }
+        startIndex--;
+    }
+
+    // Copy nbOfItems to array
+    for(size_t i = 0; i < nbOfItems; i++)
+    {
+        // Copy the element to the array
+        memcpy((char *) (array) + (i * cb->size), copyPointer, cb->size);
+
+        // Increment the copy pointer
+        copyPointer += cb->size;
+        if(copyPointer == cb->buffer_end)
+        {
+            copyPointer = cb->buffer;
+        }
+    }
+
+    return cb->count;
+}
+
+/*************************************************************************
+ *********************** Local function definitions **********************
+ ************************************************************************/
