@@ -1,6 +1,4 @@
 #include "timerManager.h"
-#include "stm32f0xx.h"
-#include "Firmware_param.h"
 
 /*************************************************************************
  ********************* Local Type/Constant definitions *******************
@@ -17,8 +15,9 @@ typedef struct timer_t
 /*************************************************************************
  *********************** Local variables declarations ********************
  ************************************************************************/
-static timer_t timerInstancesArray[MAX_TIMER_COUNT] = {{.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false, .isPeriodic = false}};
+static timer_t timerInstancesArray[MAX_TIMER_COUNT] = { {.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false, .isPeriodic = false}};
 static volatile uint32_t currentTime = 0;
+static timerConfig_t cfg = {0};
 
 /*************************************************************************
  *********************** Local function declarations *********************
@@ -29,47 +28,34 @@ static uint32_t getCurrentTime();
 /*************************************************************************
  *********************** Public function definitions *********************
  ************************************************************************/
-void timerManager_init()
+void timerManager_init(const timerConfig_t *const config)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-    
-    TIM_DeInit(TIM16);
-    TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-    
-    // Enable TIM16 Periph clock
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM16 , ENABLE);
-    
-    // Time base configuration
-    TIM_TimeBaseStructure.TIM_Prescaler = (1000-1); // 48MHz/1000 = 48kHz     
-    TIM_TimeBaseStructure.TIM_Period = 480;         // 48kHz/48 = 100Hz
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;    
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  
-    TIM_TimeBaseInit(TIM16, &TIM_TimeBaseStructure);
-    
-    // Configure the interrupt
-    NVIC_InitStructure.NVIC_IRQChannel = TIM16_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPriority = TIMER_MANAGER_INTERRUPT_PRIORITY;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-    
-    // Enable the capture compare 1 interrupt
-    TIM_ITConfig(TIM16, TIM_IT_CC1, ENABLE);
-    TIM_Cmd(TIM16, ENABLE);
+    cfg = *config;
+
+    if(NULL != cfg.initFunc)
+    {
+        cfg.initFunc();
+    }
 }
 
 void timerManager_uninit()
 {
-    TIM_Cmd(TIM16, DISABLE);
-    TIM_ITConfig(TIM16, TIM_IT_CC1, DISABLE);
-    NVIC_DisableIRQ(TIM16_IRQn);
+    if(NULL == cfg.uninitFunc)
+    {
+        return;
+    }
+
+    cfg.uninitFunc();
+    cfg.initFunc = NULL;
+    cfg.uninitFunc = NULL;
+    cfg.setInterrupt = NULL;
 }
 
 void timerManager_run()
 {
     uint32_t time = getCurrentTime();
     uint32_t elapsedTime = 0;
-    
+
     // Iterate through all started timers
     for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
     {
@@ -84,7 +70,7 @@ void timerManager_run()
             {
                 elapsedTime = time - timerInstancesArray[i].startTime;
             }
-            
+
             // Check if the timer has expired
             if(elapsedTime >= timerInstancesArray[i].targetTime)
             {
@@ -105,40 +91,40 @@ void timerManager_run()
 timerHandle_t timerManager_createTimer(void (*callback)(timerHandle_t))
 {
     timer_t *newTimer = NULL;
-        
+
     // Sanity check
     if(NULL == callback)
     {
         return NULL;
     }
-    
+
     // Check if there's a free timer
     newTimer = getFirstFreeTimer();
     if(NULL == newTimer)
     {
         return NULL;
     }
-    
+
     // Initialize the timer
     newTimer->callback = callback;
     newTimer->isStarted = false;
     newTimer->isPeriodic = false;
-    
+
     return (timerHandle_t) newTimer;
 }
 
 void timerManager_deleteTimer(timerHandle_t timer)
 {
     timer_t *timerPointer = NULL;
-    
+
     // Sanity check
     if(NULL == timer)
     {
         return;
     }
-    
+
     // Uninitialize the timer
-    timerPointer = (timer_t *) timer;
+    timerPointer = (timer_t*) timer;
     timerPointer->callback = NULL;
     timerPointer->isStarted = false;
 }
@@ -146,14 +132,14 @@ void timerManager_deleteTimer(timerHandle_t timer)
 void timerManager_startTimer(timerHandle_t timer, uint32_t targetTime, bool isPeriodic)
 {
     timer_t *timerPointer = NULL;
-    
+
     // Sanity check
     if(NULL == timer)
     {
         return;
     }
-    
-    timerPointer = (timer_t *) timer;
+
+    timerPointer = (timer_t*) timer;
     timerPointer->startTime = getCurrentTime();
     timerPointer->targetTime = targetTime;
     timerPointer->isStarted = true;
@@ -163,28 +149,22 @@ void timerManager_startTimer(timerHandle_t timer, uint32_t targetTime, bool isPe
 void timerManager_stopTimer(timerHandle_t timer)
 {
     timer_t *timerPointer = NULL;
-    
+
     // Sanity check
     if(NULL == timer)
     {
         return;
     }
-    
-    timerPointer = (timer_t *) timer;
+
+    timerPointer = (timer_t*) timer;
     timerPointer->isStarted = false;
     timerPointer->isPeriodic = false;
 }
-    
-void TIM16_IRQHandler()
+
+void timerManager_incrementTimeBase()
 {
-    if(TIM_GetITStatus(TIM16, TIM_IT_CC1) != RESET)
-    {
-        // Clear TIM16 Capture Compare1 interrupt pending bit
-        TIM_ClearITPendingBit(TIM16, TIM_IT_CC1);
-        
-        // Increment time
-        currentTime++;
-    }
+    // Increment time
+    currentTime++;
 }
 
 /*************************************************************************
@@ -199,17 +179,17 @@ static timer_t* getFirstFreeTimer()
             return &timerInstancesArray[i];
         }
     }
-    
+
     return NULL;
 }
 
 static uint32_t getCurrentTime()
 {
     uint32_t time = 0;
-    
-    NVIC_DisableIRQ(TIM3_IRQn);
+
+    cfg.setInterrupt(false);
     time = currentTime;
-    NVIC_EnableIRQ(TIM3_IRQn);
-    
+    cfg.setInterrupt(true);
+
     return time;
 }

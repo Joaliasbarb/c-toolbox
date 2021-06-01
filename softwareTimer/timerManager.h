@@ -12,6 +12,13 @@
 
 typedef void* timerHandle_t;
 
+typedef struct
+{
+    void (*setInterrupt)(bool isEnable);
+    void (*initFunc)();
+    void (*uninitFunc)();
+} timerConfig_t;
+
 /*************************************************************************
  *************************** Macros definitions **************************
  ************************************************************************/
@@ -27,9 +34,10 @@ typedef void* timerHandle_t;
 /************************* Function Description *************************/
 /**
  * @details timerManager_init   Initialize the timeManager layer.
+ * @param [in] config   A pointer to the config structure.
  */
 /************************************************************************/
-void timerManager_init();
+void timerManager_init(const timerConfig_t * const config);
 
 /************************* Function Description *************************/
 /**
@@ -82,6 +90,11 @@ void timerManager_startTimer(timerHandle_t timer, uint32_t targetTime, bool isPe
 /************************************************************************/
 void timerManager_stopTimer(timerHandle_t timer);
 
-void TIM16_IRQHandler();
+/************************* Function Description *************************/
+/**
+ * @details timerManager_incrementTimeBase  This function shall be call regularly every 10 ms.
+ */
+/************************************************************************/
+void timerManager_incrementTimeBase();
 
 #endif
