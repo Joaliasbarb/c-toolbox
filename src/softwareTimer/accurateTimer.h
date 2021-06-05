@@ -7,7 +7,15 @@
 /*************************************************************************
  ******************** Public Type/Constant definitions *******************
  ************************************************************************/
+ #define MAX_TIMER_COUNT 5
+ 
 typedef void* accurateTimerHandle_t;
+
+typedef struct
+{
+    void (*initFunc)();
+    void (*uninitFunc)();
+} timerConfig_t;
 
 /*************************************************************************
  *********************** Public function declaration *********************
@@ -16,9 +24,10 @@ typedef void* accurateTimerHandle_t;
 /************************* Function Description *************************/
 /**
  * @details accurateTimer_init  Initialize the timer16kHz layer.
+ * @param [in] config   A pointer to the config structure.
  */
 /************************************************************************/
-void accurateTimer_init();
+void accurateTimer_init(const timerConfig_t * const config);
 
 /************************* Function Description *************************/
 /**
@@ -63,5 +72,12 @@ void accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, 
  */
 /************************************************************************/
 void accurateTimer_stopTimer(accurateTimerHandle_t timer);
+
+/************************* Function Description *************************/
+/**
+ * @details accurateTimer_incrementTimeBase This function shall be call regularly at 16kHz.
+ */
+/************************************************************************/
+void accurateTimer_incrementTimeBase();
 
 #endif

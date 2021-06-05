@@ -2,13 +2,10 @@
 #include <stdio.h>
 
 #include "accurateTimer.h"
-#include "hw_timer0.h"
 
 /*************************************************************************
  ********************* Local Type/Constant definitions *******************
  ************************************************************************/
-#define MAX_TIMER_CALLBACKS 5
-
 typedef struct accurateTimer_t
 {
     void (*callback)();
@@ -21,10 +18,11 @@ typedef struct accurateTimer_t
 /*************************************************************************
  *********************** Local variables declarations ********************
  ************************************************************************/
-static accurateTimer_t timerInstancesArray[MAX_TIMER_CALLBACKS] = { {.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false,
+static accurateTimer_t timerInstancesArray[MAX_TIMER_COUNT] = { {.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false,
         .isPeriodic = false}};
 static uint32_t currentTime = 0;
 static bool isInitialized = false;
+static timerConfig_t cfg = {0};
 
 /*************************************************************************
  *********************** Local function declarations *********************
@@ -35,24 +33,20 @@ static void timer0InterruptCallback();
 /*************************************************************************
  *********************** Public function definitions *********************
  ************************************************************************/
-void accurateTimer_init()
+void accurateTimer_init(const timerConfig_t * const config)
 {
     if(isInitialized)
     {
         return;
     }
+    
+    cfg = *config;
 
-    // Configure timer 0 to generate interrupt at 16 kHz
-    hw_timer0_init(NULL);
-    hw_timer0_set_clock_source(HW_TIMER0_CLK_SRC_FAST); // Select base clock of 16 MHz
-    hw_timer0_set_pwm_mode(HW_TIMER0_MODE_PWM);
-    hw_timer0_set_t0_reload(499, 499); // f = (16 MHz)/(M+1)+(N+1) ==> f = (16*10^6) / (1000) = 16 kHz
-    hw_timer0_set_on_clock_div(false);
-    hw_timer0_set_on_reload(550); // Generate the interrupt only when M and N equal to 0
-    hw_timer0_register_int(timer0InterruptCallback);
+    if(NULL != cfg.initFunc)
+    {
+        cfg.initFunc();
+    }
 
-    // Start the timer 0
-    hw_timer0_enable();
     isInitialized = true;
 }
 
@@ -63,8 +57,14 @@ void accurateTimer_uninit()
         return;
     }
 
-    hw_timer0_unregister_int();
-    hw_timer0_disable();
+    if(NULL == cfg.uninitFunc)
+    {
+        return;
+    }
+
+    cfg.uninitFunc();
+    cfg.initFunc = NULL;
+    cfg.uninitFunc = NULL;
     isInitialized = false;
 }
 
@@ -142,23 +142,7 @@ void accurateTimer_stopTimer(accurateTimerHandle_t timer)
     timerPointer->isPeriodic = false;
 }
 
-/*************************************************************************
- *********************** Local function definitions **********************
- ************************************************************************/
-static accurateTimer_t* getFirstFreeTimer()
-{
-    for(size_t i = 0; i < MAX_TIMER_CALLBACKS; i++)
-    {
-        if(NULL == timerInstancesArray[i].callback)
-        {
-            return &timerInstancesArray[i];
-        }
-    }
-
-    return NULL;
-}
-
-static void timer0InterruptCallback()
+void accurateTimer_incrementTimeBase()
 {
     uint32_t elapsedTime = 0;
 
@@ -166,7 +150,7 @@ static void timer0InterruptCallback()
     currentTime++;
 
     // Iterate through all started timers
-    for(size_t i = 0; i < MAX_TIMER_CALLBACKS; i++)
+    for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
     {
         if(timerInstancesArray[i].isStarted)
         {
@@ -200,4 +184,20 @@ static void timer0InterruptCallback()
             }
         }
     }
+}
+
+/*************************************************************************
+ *********************** Local function definitions **********************
+ ************************************************************************/
+static accurateTimer_t* getFirstFreeTimer()
+{
+    for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
+    {
+        if(NULL == timerInstancesArray[i].callback)
+        {
+            return &timerInstancesArray[i];
+        }
+    }
+
+    return NULL;
 }
