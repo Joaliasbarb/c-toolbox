@@ -32,4 +32,4 @@ execute_process(COMMAND
 # # to the source code
 configure_file (
     "${PROJECT_SOURCE_DIR}/src/utils/cToolboxVersion.h.in"
-    "${PROJECT_BINARY_DIR}/src/utils/cToolboxVersion.h")
+    "${PROJECT_BINARY_DIR}/src/cToolboxVersion.h")

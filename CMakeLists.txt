@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.20)
 project(c-toolbox)
 
 message("CMAKE_C_COMPILER:" ${CMAKE_C_COMPILER})
@@ -13,3 +13,5 @@ include("${PROJECT_SOURCE_DIR}/config/versioning.cmake")
 
 # GoogleTest requires at least C++11
 set(CMAKE_CXX_STANDARD 11)
+
+add_subdirectory(src)
