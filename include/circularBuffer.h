@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __CIRCULAR_BUFFER_H_
 #define __CIRCULAR_BUFFER_H_
 
@@ -169,4 +173,8 @@ size_t cb_getItemCount(circularBuffer_t *cb);
  */
 /************************************************************************/
 size_t cb_getBufferArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array);
+#endif
+
+#ifdef __cplusplus
+}
 #endif

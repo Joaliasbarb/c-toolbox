@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __MISC_UTILS_H_
 #define __MISC_UTILS_H_
 
@@ -133,4 +137,8 @@ bool miscUtils_isValueInRange(const uint32_t value, const uint32_t minValue, con
 /************************************************************************/
 uint32_t miscUtils_computeCrc32(uint8_t *data, size_t length);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

@@ -31,5 +31,5 @@ execute_process(COMMAND
 # # configure a header file to pass some of the CMake settings
 # # to the source code
 configure_file (
-    "${PROJECT_SOURCE_DIR}/src/utils/cToolboxVersion.h.in"
-    "${PROJECT_BINARY_DIR}/src/cToolboxVersion.h")
+    "${PROJECT_SOURCE_DIR}/config/cToolboxVersion.h.in"
+    "${PROJECT_BINARY_DIR}/include/cToolboxVersion.h")

@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef ACCURATE_TIMER_H_
 #define ACCURATE_TIMER_H_
 
@@ -80,4 +84,8 @@ void accurateTimer_stopTimer(accurateTimerHandle_t timer);
 /************************************************************************/
 void accurateTimer_incrementTimeBase();
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

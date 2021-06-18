@@ -1,17 +1,29 @@
 cmake_minimum_required(VERSION 3.20)
 project(c-toolbox)
 
-message("CMAKE_C_COMPILER:" ${CMAKE_C_COMPILER})
-message("CMAKE_CXX_COMPILER:" ${CMAKE_CXX_COMPILER})
-message("CMAKE_CXX_COMPILER_EXTERNAL_TOOLCHAIN:" ${CMAKE_CXX_COMPILER_EXTERNAL_TOOLCHAIN})
-message("PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
-
-find_package(Git)
+if(${PROJECT_NAME} STREQUAL ${CMAKE_PROJECT_NAME})
+    set(BUILD_TEST_DEFAULT ON)
+else()
+    set(BUILD_TEST_DEFAULT OFF)
+endif()
+option(BUILD_TESTS "Build the tests" ${BUILD_TEST_DEFAULT})
 
 # Version management
-include("${PROJECT_SOURCE_DIR}/config/versioning.cmake")
+find_package(Git)
+include("config/versioning.cmake")
 
-# GoogleTest requires at least C++11
-set(CMAKE_CXX_STANDARD 11)
+add_library(cToolbox STATIC
+    "src/accurateTimer.c"
+    "src/timerManager.c"
+    "src/circularBuffer.c"
+    "src/miscUtils.c"
+    "src/quickSort.c")
 
-add_subdirectory(src)
+target_include_directories(cToolbox PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test/gtest)
+endif()
+
+

@@ -28,7 +28,6 @@ static timerConfig_t cfg = {0};
  *********************** Local function declarations *********************
  ************************************************************************/
 static accurateTimer_t* getFirstFreeTimer();
-static void timer0InterruptCallback();
 
 /*************************************************************************
  *********************** Public function definitions *********************

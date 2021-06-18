@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __TIMER_MANAGER_H_
 #define __TIMER_MANAGER_H_
 
@@ -97,4 +101,8 @@ void timerManager_stopTimer(timerHandle_t timer);
 /************************************************************************/
 void timerManager_incrementTimeBase();
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
