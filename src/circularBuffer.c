@@ -18,8 +18,14 @@
 /*************************************************************************
  *********************** Public function definitions *********************
  ************************************************************************/
-void cb_initStatic(circularBuffer_t *cb, void *array, size_t capacity, size_t size)
+bool cb_initStatic(circularBuffer_t *cb, void *array, size_t capacity, size_t size)
 {
+    // Sanity check
+    if((NULL == cb) || (NULL == array) || (0 == capacity) || (0 == size))
+    {
+        return false;
+    }
+
     cb->buffer = array;
     cb->buffer_end = (char *)cb->buffer + capacity * size;
     cb->capacity = capacity;
@@ -27,29 +33,51 @@ void cb_initStatic(circularBuffer_t *cb, void *array, size_t capacity, size_t si
     cb->size = size;
     cb->back = cb->buffer;
     cb->front = cb->buffer;
+    return true;
 }
 
-void cb_init(circularBuffer_t *cb, size_t capacity, size_t size)
+bool cb_init(circularBuffer_t *cb, size_t capacity, size_t size)
 {
+    // Sanity check
+    if((NULL == cb) || (0 == capacity) || (0 == size))
+    {
+        return false;
+    }
+
+    // Allocate memory for the buffer
     cb->buffer = malloc(capacity * size);
+    if(NULL == cb->buffer)
+    {
+        return false;
+    }
+
     cb->buffer_end = (char *)cb->buffer + capacity * size;
     cb->capacity = capacity;
     cb->count = 0;
     cb->size = size;
     cb->back = cb->buffer;
     cb->front = cb->buffer;
+    return true;
 }
 
-void cb_free(circularBuffer_t *cb)
+bool cb_free(circularBuffer_t *cb)
 {
+    // Sanity check
+    if(NULL == cb)
+    {
+        return false;
+    }
+
     free(cb->buffer);
     cb->count = 0;
     cb->size = 0;
+    return true;
 }
 
 bool cb_pushBack(circularBuffer_t *cb, const void *item)
 {
-    if(cb->count == cb->capacity)
+    // Sanity check
+    if((NULL == cb) || (NULL == item) || (cb->count == cb->capacity))
     {
         return false;
     }
@@ -69,6 +97,12 @@ bool cb_pushBackOverwrite(circularBuffer_t * const cb, void * const item, void *
 {
     bool isBufferFullBeforeAdd = false;
 
+    // Sanity check
+    if((NULL == cb) || (NULL == item))
+    {
+        return false;
+    }
+
     // Check if buffer is full
     if(cb->count == cb->capacity)
     {
@@ -86,7 +120,8 @@ bool cb_pushBackOverwrite(circularBuffer_t * const cb, void * const item, void *
 
 bool cb_pushFront(circularBuffer_t *cb, const void *item)
 {
-    if(cb->count == cb->capacity)
+    // Sanity check
+    if((NULL == cb) || (NULL == item) || (cb->count == cb->capacity))
     {
         return false;
     }
@@ -106,6 +141,12 @@ bool cb_pushFrontOverwrite(circularBuffer_t * const cb, void * const item, void 
 {
     bool isBufferFullBeforeAdd = false;
 
+    // Sanity check
+    if ((NULL == cb) || (NULL == item))
+    {
+        return false;
+    }
+
     // Check if buffer is full
     if(cb->count == cb->capacity)
     {
@@ -123,7 +164,8 @@ bool cb_pushFrontOverwrite(circularBuffer_t * const cb, void * const item, void 
 
 bool cb_popBack(circularBuffer_t *cb, void *item)
 {
-    if(cb->count == 0)
+    // Sanity check
+    if((NULL == cb) || (0 == cb->count))
     {
         return false;
     }
@@ -145,7 +187,8 @@ bool cb_popBack(circularBuffer_t *cb, void *item)
 
 bool cb_popFront(circularBuffer_t *cb, void *item)
 {
-    if(cb->count == 0)
+    // Sanity check
+    if((NULL == cb) || (0 == cb->count))
     {
         return false;
     }
@@ -169,7 +212,8 @@ bool cb_peek(circularBuffer_t * const cb, size_t itemIndex, void * const item)
 {
     char *copyPointer = cb->front;
 
-    if(itemIndex >= cb->count)
+    // Sanity check
+    if((NULL == cb) || (itemIndex >= cb->count) || (NULL == item))
     {
         return false;
     }
@@ -191,6 +235,12 @@ bool cb_peek(circularBuffer_t * const cb, size_t itemIndex, void * const item)
     
 void cb_empty(circularBuffer_t *cb)
 {
+    // Sanity check
+    if(NULL == cb)
+    {
+        return;
+    }
+
     cb->count = 0;
     cb->back = cb->buffer;
     cb->front = cb->buffer;
@@ -198,20 +248,27 @@ void cb_empty(circularBuffer_t *cb)
 
 size_t cb_getItemCount(circularBuffer_t *cb)
 {
+    // Sanity check
+    if(NULL == cb)
+    {
+        return 0;
+    }
+
     return cb->count;
 }
 
 size_t cb_getBufferArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array)
 {
-    char *copyPointer = cb->front;
+    char *copyPointer = NULL;
 
-    // verify input parameter are corrects
-    if((startIndex >= cb->count) || ((nbOfItems + startIndex) > cb->count))
+    // Sanity check
+    if((NULL == cb) || (NULL == array) || (startIndex >= cb->count) || ((nbOfItems + startIndex) > cb->count))
     {
         return false;
     }
 
-    // calculate the address of the item
+    // Calculate the address of the item
+    copyPointer = cb->front;
     while(0 != startIndex)
     {
         copyPointer += cb->size;

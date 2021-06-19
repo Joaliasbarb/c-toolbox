@@ -12,7 +12,6 @@ extern "C" {
 /*************************************************************************
  ******************** Public Type/Constant definitions *******************
  ************************************************************************/
-
 #define CB_FRONT_IDX    (0)     /**< Circular buffer front item index  */
 
 typedef struct circularBuffer
@@ -35,31 +34,34 @@ typedef struct circularBuffer
  * @details cb_initStatic   Create a circular buffer instance with a static array.
  *      This buffer can only contain elements of the same type.
  * @param [out] cb      A pointer to the circular buffer instance. 
- * @param [in] capacity The max capacity of the buffer.
- * @param [in] size     The size of the buffer elements.
+ * @param [in] capacity The max number of elements in the buffer.
+ * @param [in] size     The size of the buffer elements in byte.
  * @param [in] array    The array to manage as circular buffer.
+ * @return true if the initialization was successful, false otherwise. 
  */
 /************************************************************************/
-void cb_initStatic(circularBuffer_t *cb, void *array, size_t capacity, size_t size);
+bool cb_initStatic(circularBuffer_t *cb, void *array, size_t capacity, size_t size);
 
 /************************* Function Description *************************/
 /**
  * @details cb_init     Create a circulat buffer instance. The memory is dynamically allocated with malloc.
  *      This buffer can only contain elements of the same type.
  * @param [out] cb      A pointer to the circular buffer instance. 
- * @param [in] capacity The max capacity of the buffer.
- * @param [in] size     The size of the buffer elements.
+ * @param [in] capacity The max number of elements in the buffer.
+ * @param [in] size     The size of the buffer elements in byte.
+ * @return true if the initialization was successful, false otherwise.
  */
 /************************************************************************/
-void cb_init(circularBuffer_t *cb, size_t capacity, size_t size);
+bool cb_init(circularBuffer_t *cb, size_t capacity, size_t size);
 
 /************************* Function Description *************************/
 /**
  * @details cb_free Delete a circulat buffer instance.
  * @param [in] cb   A pointer to the circular buffer instance. 
+ * @return true if the uninitialization was successful, false otherwise.
  */
 /************************************************************************/
-void cb_free(circularBuffer_t *cb);
+bool cb_free(circularBuffer_t *cb);
 
 /************************* Function Description *************************/
 /**
@@ -114,6 +116,7 @@ bool cb_pushFrontOverwrite(circularBuffer_t * const cb, void * const item, void 
  * @details cb_popBack  Get an element from the back of the buffer.
  * @param [in] cb       A pointer to the circular buffer instance. 
  * @param [out] item    A pointer to the item to get from the buffer.
+ *      If this parameter is NULL, the element is still removed from the buffer.
  *
  * @return true is the element was successfuly taken, false otherwise. 
  */
@@ -125,6 +128,7 @@ bool cb_popBack(circularBuffer_t *cb, void *item);
  * @details cb_popFront Get an element from the front of the buffer.
  * @param [in] cb       A pointer to the circular buffer instance. 
  * @param [out] item    A pointer to the item to get from the buffer.
+ *      If this parameter is NULL, the element is still removed from the buffer.
  *
  * @return true is the element was successfuly taken, false otherwise. 
  */
