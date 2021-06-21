@@ -210,7 +210,7 @@ bool cb_popFront(circularBuffer_t *cb, void *item)
 
 bool cb_peek(circularBuffer_t * const cb, size_t itemIndex, void * const item)
 {
-    char *copyPointer = cb->front;
+    char *copyPointer = NULL;
 
     // Sanity check
     if((NULL == cb) || (itemIndex >= cb->count) || (NULL == item))
@@ -219,6 +219,7 @@ bool cb_peek(circularBuffer_t * const cb, size_t itemIndex, void * const item)
     }
 
     // calculate the address of the item
+    copyPointer = cb->front;
     while(0 != itemIndex)
     {
         copyPointer += cb->size;
