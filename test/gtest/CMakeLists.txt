@@ -33,4 +33,4 @@ function(package_add_test)
     set_target_properties(${INPUT_TESTNAME} PROPERTIES FOLDER test/gtest)
 endfunction()
 
-package_add_test(TESTNAME circularBufferTest FILES gtest_circularBuffer.cpp LIBS cToolbox)
+package_add_test(TESTNAME circularBufferTest FILES ut_circularBuffer.cpp LIBS cToolbox)

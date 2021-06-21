@@ -18,8 +18,8 @@ protected:
 
     }
 
-    uint8_t testBufferArray[BUFFER_SIZE] = {0};
-    circularBuffer_t testBuffer = {0};
+    uint8_t testBufferArray[BUFFER_SIZE] = { 0 };
+    circularBuffer_t testBuffer = { 0 };
 };
 
 TEST_F(CircularBufferTest, InitStaticNullPointer)
@@ -75,15 +75,14 @@ TEST_F(CircularBufferTest, FreeNullPointer)
     }
 }
 
-TEST_F(CircularBufferTest, IsEmptyInitially) 
+TEST_F(CircularBufferTest, IsEmptyInitially)
 {
     EXPECT_EQ(cb_getItemCount(&testBuffer), 0) << "Buffer not empty after initialization.\n";
 }
-
-TEST_F(CircularBufferTest, PushBack) 
+TEST_F(CircularBufferTest, PushBack)
 {
-    std::vector<uint8_t> inputData{10, 25, 37, 43, 59};
-    uint8_t outputData[BUFFER_SIZE] = {0};
+    std::vector<uint8_t> inputData{ 10, 25, 37, 43, 59 };
+    uint8_t outputData[BUFFER_SIZE] = { 0 };
     size_t dataCount = 0;
     bool isAdded = false;
 
@@ -96,13 +95,13 @@ TEST_F(CircularBufferTest, PushBack)
     }
 
     // Check the data
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(0, memcmp(inputData.data(), outputData, BUFFER_SIZE)) << "Added data mismatch.\n";
 
     // Add one more data
     isAdded = cb_pushBack(&testBuffer, &inputData[0]);
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     EXPECT_FALSE(isAdded);
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(0, memcmp(inputData.data(), outputData, BUFFER_SIZE)) << "Buffer was modified.\n";
@@ -141,13 +140,13 @@ TEST_F(CircularBufferTest, PushBackOverwrite)
     }
 
     // Check the data
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(0, memcmp(inputData.data(), outputData, BUFFER_SIZE)) << "Added data mismatch.\n";
 
     // Add one more data
     isItemRemoved = cb_pushBackOverwrite(&testBuffer, &inputData[0], &oldValue);
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     EXPECT_TRUE(isItemRemoved);
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(inputData.front(), oldValue);
@@ -184,7 +183,7 @@ TEST_F(CircularBufferTest, PushFront)
     bool isAdded = false;
 
     // Fill the buffer
-    for (int i = 0; i < BUFFER_SIZE; i++)
+    for(int i = 0; i < BUFFER_SIZE; i++)
     {
         isAdded = cb_pushFront(&testBuffer, &inputData[i]);
         EXPECT_TRUE(isAdded) << "Failed to add data to buffer (unexpected return value).\n";
@@ -192,14 +191,14 @@ TEST_F(CircularBufferTest, PushFront)
     }
 
     // Check the data
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     std::reverse(inputData.begin(), inputData.end()); // cb_getBufferArray returns the element from the front to the back
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(0, memcmp(inputData.data(), outputData, BUFFER_SIZE)) << "Added data mismatch.\n";
 
     // Add one more data
     isAdded = cb_pushFront(&testBuffer, &inputData[0]);
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     EXPECT_FALSE(isAdded);
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(0, memcmp(inputData.data(), outputData, BUFFER_SIZE)) << "Buffer was modified.\n";
@@ -231,7 +230,7 @@ TEST_F(CircularBufferTest, PushFrontOverwrite)
     bool isItemRemoved = false;
 
     // Fill the buffer
-    for (int i = 0; i < BUFFER_SIZE; i++)
+    for(int i = 0; i < BUFFER_SIZE; i++)
     {
         isItemRemoved = cb_pushFrontOverwrite(&testBuffer, &inputData[i], &oldValue);
         EXPECT_FALSE(isItemRemoved) << "Failed to add data to buffer (unexpected return value).\n";
@@ -239,14 +238,14 @@ TEST_F(CircularBufferTest, PushFrontOverwrite)
     }
 
     // Check the data
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     std::reverse_copy(inputData.begin(), inputData.end(), reversedData.begin()); // cb_getBufferArray returns the element from the front to the back
     EXPECT_EQ(BUFFER_SIZE, dataCount);
     EXPECT_EQ(0, memcmp(reversedData.data(), outputData, BUFFER_SIZE)) << "Added data mismatch.\n";
 
     // Add one more data
     isItemRemoved = cb_pushFrontOverwrite(&testBuffer, &inputData[0], &oldValue);
-    dataCount = cb_getBufferArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
+    dataCount = cb_getArray(&testBuffer, CB_FRONT_IDX, BUFFER_SIZE, outputData);
     reversedData[0] = inputData[0]; // cb_pushFrontOverwrite overwrites the data at the front
     EXPECT_TRUE(isItemRemoved);
     EXPECT_EQ(BUFFER_SIZE, dataCount);
@@ -322,4 +321,196 @@ TEST_F(CircularBufferTest, PopBackNullPointer)
     EXPECT_TRUE(cb_popBack(&testBuffer, &dummy));
     EXPECT_EQ(5, dummy);
     EXPECT_EQ(0, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, PopFrontEmpty)
+{
+    uint8_t dummy = 0;
+    EXPECT_FALSE(cb_popFront(&testBuffer, &dummy));
+}
+
+TEST_F(CircularBufferTest, PopFront)
+{
+    std::vector<uint8_t> inputData{ 10, 25, 37 };
+    uint8_t dummy = 0;
+
+    // Add three data
+    EXPECT_TRUE(cb_pushBack(&testBuffer, &inputData[0]));
+    EXPECT_TRUE(cb_pushFront(&testBuffer, &inputData[1]));
+    EXPECT_TRUE(cb_pushBack(&testBuffer, &inputData[2]));
+    EXPECT_EQ(3, cb_getItemCount(&testBuffer));
+
+    // Pop data form back
+    EXPECT_TRUE(cb_popFront(&testBuffer, &dummy));
+    EXPECT_EQ(inputData[1], dummy);
+    EXPECT_EQ(2, cb_getItemCount(&testBuffer));
+
+    EXPECT_TRUE(cb_popFront(&testBuffer, &dummy));
+    EXPECT_EQ(inputData[0], dummy);
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+
+    EXPECT_TRUE(cb_popFront(&testBuffer, &dummy));
+    EXPECT_EQ(inputData[2], dummy);
+    EXPECT_EQ(0, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, PopFrontNullPointer)
+{
+    uint8_t dummy = 5;
+
+    // Add two data to the buffer
+    EXPECT_TRUE(cb_pushBack(&testBuffer, &dummy));
+    EXPECT_TRUE(cb_pushBack(&testBuffer, &dummy));
+    EXPECT_EQ(2, cb_getItemCount(&testBuffer));
+
+    // Remove them but pass a null pointer
+    EXPECT_FALSE(cb_popFront(NULL, NULL));
+    EXPECT_TRUE(cb_popFront(&testBuffer, NULL));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+    EXPECT_TRUE(cb_popFront(&testBuffer, &dummy));
+    EXPECT_EQ(5, dummy);
+    EXPECT_EQ(0, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, PeekEmpty)
+{
+    uint8_t dummy = 0;
+    EXPECT_FALSE(cb_peek(&testBuffer, 0, &dummy));
+}
+
+TEST_F(CircularBufferTest, PeekNullPointer)
+{
+    uint8_t dummy = 5;
+
+    ASSERT_TRUE(cb_pushBack(&testBuffer, &dummy));
+
+    EXPECT_FALSE(cb_peek(NULL, 0, NULL));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+
+    EXPECT_FALSE(cb_peek(NULL, 0, &dummy));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+
+    EXPECT_FALSE(cb_peek(&testBuffer, 0, NULL));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, PeekOutOfBound)
+{
+    uint8_t dummy = 5;
+
+    ASSERT_TRUE(cb_pushBack(&testBuffer, &dummy));
+    EXPECT_FALSE(cb_peek(&testBuffer, 1, NULL));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, Peek)
+{
+    std::vector<uint8_t> inputData{ 10, 25, 37, 43, 59 };
+    uint8_t value = 0;
+
+    // Fill the buffer
+    for(int i = 0; i < inputData.size(); i++)
+    {
+        ASSERT_TRUE(cb_pushBack(&testBuffer, &inputData[i]));
+    }
+
+    EXPECT_TRUE(cb_peek(&testBuffer, 0, &value));
+    EXPECT_EQ(value, inputData[0]);
+    EXPECT_EQ(inputData.size(), cb_getItemCount(&testBuffer));
+
+    EXPECT_TRUE(cb_peek(&testBuffer, inputData.size() - 1, &value));
+    EXPECT_EQ(value, inputData[inputData.size() - 1]);
+    EXPECT_EQ(inputData.size(), cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, EmptyNullPointer)
+{
+    cb_empty(NULL);
+}
+
+TEST_F(CircularBufferTest, Empty)
+{
+    std::vector<uint8_t> inputData{ 10, 25, 37 };
+
+    // Fill the buffer
+    for(int i = 0; i < inputData.size(); i++)
+    {
+        ASSERT_TRUE(cb_pushBack(&testBuffer, &inputData[i]));
+    }
+
+    cb_empty(&testBuffer);
+    ASSERT_EQ(0, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, GetItemCountNullPointer)
+{
+    EXPECT_EQ(0, cb_getItemCount(NULL));
+}
+
+TEST_F(CircularBufferTest, GetItemCount)
+{
+    uint8_t dummy = 5;
+
+    EXPECT_EQ(0, cb_getItemCount(&testBuffer));
+
+    ASSERT_TRUE(cb_pushBack(&testBuffer, &dummy));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+
+    ASSERT_TRUE(cb_pushBack(&testBuffer, &dummy));
+    EXPECT_EQ(2, cb_getItemCount(&testBuffer));
+
+    ASSERT_TRUE(cb_popBack(&testBuffer, &dummy));
+    EXPECT_EQ(1, cb_getItemCount(&testBuffer));
+}
+
+TEST_F(CircularBufferTest, GetArrayNullPointer)
+{
+    uint8_t dummy = 0;
+    uint8_t outputBuffer[BUFFER_SIZE];
+
+    ASSERT_TRUE(cb_pushBack(&testBuffer, &dummy));
+    EXPECT_EQ(0, cb_getArray(NULL, 0, 1, NULL));
+    EXPECT_EQ(0, cb_getArray(NULL, 0, 1, outputBuffer));
+    EXPECT_EQ(0, cb_getArray(&testBuffer, 0, 1, NULL));
+}
+
+TEST_F(CircularBufferTest, GetArrayOutOfBound)
+{
+    uint8_t dummy = 0;
+    uint8_t outputBuffer[BUFFER_SIZE];
+
+    ASSERT_TRUE(cb_pushBack(&testBuffer, &dummy));
+
+    // Get zero item
+    EXPECT_EQ(0, cb_getArray(&testBuffer, 0, 0, outputBuffer));
+
+    // Index out of bound
+    EXPECT_EQ(0, cb_getArray(&testBuffer, 1, 1, outputBuffer));
+
+    // Get too much items
+    EXPECT_EQ(0, cb_getArray(&testBuffer, 0, 2, outputBuffer));
+}
+
+TEST_F(CircularBufferTest, GetArray)
+{
+    std::vector<uint8_t> inputData{ 10, 25, 37 };
+    uint8_t outputBuffer[BUFFER_SIZE];
+
+    // Fill the buffer
+    for(int i = 0; i < inputData.size(); i++)
+    {
+        ASSERT_TRUE(cb_pushBack(&testBuffer, &inputData[i]));
+    }
+
+    // Read entire buffer
+    EXPECT_EQ(inputData.size(), cb_getArray(&testBuffer, 0, inputData.size(), outputBuffer));
+    EXPECT_EQ(0, memcmp(inputData.data(), outputBuffer, inputData.size()));
+
+    // Read partial buffer from front
+    EXPECT_EQ(inputData.size() - 1, cb_getArray(&testBuffer, 0, inputData.size() - 1, outputBuffer));
+    EXPECT_EQ(0, memcmp(inputData.data(), outputBuffer, inputData.size() - 1));
+
+    // Read partial buffer
+    EXPECT_EQ(inputData.size() - 1, cb_getArray(&testBuffer, 1, inputData.size() - 1, outputBuffer));
+    EXPECT_EQ(0, memcmp(&inputData.at(1), outputBuffer, inputData.size() - 1));
 }
