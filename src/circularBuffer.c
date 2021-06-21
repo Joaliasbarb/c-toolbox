@@ -294,7 +294,7 @@ size_t cb_getArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfIt
         }
     }
 
-    return cb->count;
+    return nbOfItems;
 }
 
 /*************************************************************************
