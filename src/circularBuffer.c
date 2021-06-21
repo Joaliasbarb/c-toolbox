@@ -258,14 +258,14 @@ size_t cb_getItemCount(circularBuffer_t *cb)
     return cb->count;
 }
 
-size_t cb_getBufferArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array)
+size_t cb_getArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array)
 {
     char *copyPointer = NULL;
 
     // Sanity check
     if((NULL == cb) || (NULL == array) || (startIndex >= cb->count) || ((nbOfItems + startIndex) > cb->count))
     {
-        return false;
+        return 0;
     }
 
     // Calculate the address of the item

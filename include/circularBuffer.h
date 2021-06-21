@@ -167,16 +167,17 @@ size_t cb_getItemCount(circularBuffer_t *cb);
 
 /************************* Function Description *************************/
 /**
- * @details cb_getBufferArray   Get an array containing all the items in the buffer from the front to the back.
+ * @details cb_getArray     Get an array containing all the items in the buffer from the front to the back.
  * @param [in] cb           A pointer to the circular buffer instance.
  * @param [in] startIndex   The index of the item to get. 0 is the index of the item at the front of the buffer.
- * @param [in] nbOfItems    Number of items to copy in array
- * @param [out] array       A pointer to the array to put the items in.
+ * @param [in] nbOfItems    Number of items to copy in array. If nbOfItems is greater than the number of items between
+ *      startIndex and the end of the buffer, no item is copied.
+ * @param [out] array       A pointer to the array to copy the items in.
  *
  * @return The number of copied items.
  */
 /************************************************************************/
-size_t cb_getBufferArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array);
+size_t cb_getArray(circularBuffer_t * const cb, size_t startIndex, size_t nbOfItems, void * const array);
 #endif
 
 #ifdef __cplusplus
