@@ -18,11 +18,11 @@ typedef struct accurateTimer_t
 /*************************************************************************
  *********************** Local variables declarations ********************
  ************************************************************************/
-static accurateTimer_t timerInstancesArray[MAX_TIMER_COUNT] = { {.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false,
+static accurateTimer_t timerInstancesArray[MAX_ACCURATE_TIMER_COUNT] = { {.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false,
         .isPeriodic = false}};
 static uint32_t currentTime = 0;
 static bool isInitialized = false;
-static timerConfig_t cfg = {0};
+static accurateTimerConfig_t cfg = {0};
 
 /*************************************************************************
  *********************** Local function declarations *********************
@@ -32,11 +32,11 @@ static accurateTimer_t* getFirstFreeTimer();
 /*************************************************************************
  *********************** Public function definitions *********************
  ************************************************************************/
-void accurateTimer_init(const timerConfig_t * const config)
+bool accurateTimer_init(const accurateTimerConfig_t * const config)
 {
-    if(isInitialized)
+    if((NULL == config) | isInitialized)
     {
-        return;
+        return false;
     }
     
     cfg = *config;
@@ -49,22 +49,22 @@ void accurateTimer_init(const timerConfig_t * const config)
     isInitialized = true;
 }
 
-void accurateTimer_uninit()
+bool accurateTimer_uninit()
 {
     if(!isInitialized)
     {
-        return;
+        return false;
     }
 
-    if(NULL == cfg.uninitFunc)
+    if(NULL != cfg.uninitFunc)
     {
-        return;
+        cfg.uninitFunc();
     }
 
-    cfg.uninitFunc();
     cfg.initFunc = NULL;
     cfg.uninitFunc = NULL;
     isInitialized = false;
+    return true;
 }
 
 accurateTimerHandle_t accurateTimer_createTimer(void (*callback)(accurateTimerHandle_t timerHandle))
@@ -149,7 +149,7 @@ void accurateTimer_incrementTimeBase()
     currentTime++;
 
     // Iterate through all started timers
-    for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
+    for(size_t i = 0; i < MAX_ACCURATE_TIMER_COUNT; i++)
     {
         if(timerInstancesArray[i].isStarted)
         {
@@ -190,7 +190,7 @@ void accurateTimer_incrementTimeBase()
  ************************************************************************/
 static accurateTimer_t* getFirstFreeTimer()
 {
-    for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
+    for(size_t i = 0; i < MAX_ACCURATE_TIMER_COUNT; i++)
     {
         if(NULL == timerInstancesArray[i].callback)
         {

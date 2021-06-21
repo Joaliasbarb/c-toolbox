@@ -11,7 +11,7 @@ extern "C" {
 /*************************************************************************
  ******************** Public Type/Constant definitions *******************
  ************************************************************************/
- #define MAX_TIMER_COUNT 5
+ #define MAX_ACCURATE_TIMER_COUNT 5
  
 typedef void* accurateTimerHandle_t;
 
@@ -19,7 +19,7 @@ typedef struct
 {
     void (*initFunc)();
     void (*uninitFunc)();
-} timerConfig_t;
+} accurateTimerConfig_t;
 
 /*************************************************************************
  *********************** Public function declaration *********************
@@ -27,24 +27,26 @@ typedef struct
 
 /************************* Function Description *************************/
 /**
- * @details accurateTimer_init  Initialize the timer16kHz layer.
+ * @details accurateTimer_init  Initialize the accurateTimer layer.
  * @param [in] config   A pointer to the config structure.
+ * @return true if the initialization is successful, false otherwise.
  */
 /************************************************************************/
-void accurateTimer_init(const timerConfig_t * const config);
+bool accurateTimer_init(const accurateTimerConfig_t * const config);
 
 /************************* Function Description *************************/
 /**
- * @details accurateTimer_uninit    Uninitialize the timer16kHz layer.
+ * @details accurateTimer_uninit    Uninitialize the accurateTimer layer.
+ * @return true if the uninitialization is successful, false otherwise.
  */
 /************************************************************************/
-void accurateTimer_uninit();
+bool accurateTimer_uninit();
 
 /************************* Function Description *************************/
 /**
  * @details accurateTimer_createTimer   Ask for a free instance of timer.
  * @param [in] callback A pointer to the function to call when the timer has expired.
- *      WARNING: The callback is called in an interrupt context !
+ *      WARNING: The callback is called in the same context as the function calling accurateTimer_incrementTimeBase() !
  *
  * @return A timer instance if there's one free, NULL otherwise.
  */
