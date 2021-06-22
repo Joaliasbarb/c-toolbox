@@ -111,14 +111,14 @@ bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer)
     return true;
 }
 
-void accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, bool isPeriodic)
+bool accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, bool isPeriodic)
 {
     accurateTimer_t *timerPointer = NULL;
 
     // Sanity check
     if(NULL == timer)
     {
-        return;
+        return false;
     }
 
     timerPointer = (accurateTimer_t *) timer;
@@ -126,6 +126,7 @@ void accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, 
     timerPointer->targetTime = targetTime;
     timerPointer->isStarted = true;
     timerPointer->isPeriodic = isPeriodic;
+    return true;
 }
 
 void accurateTimer_stopTimer(accurateTimerHandle_t timer)
