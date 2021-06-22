@@ -14,11 +14,13 @@ extern "C" {
  #define MAX_ACCURATE_TIMER_COUNT 5
  
 typedef void* accurateTimerHandle_t;
+typedef void (*accurateTimerCb_t)();
+typedef void (*accurateTimerExpired_t)(accurateTimerHandle_t timerHandle);
 
 typedef struct
 {
-    void (*initFunc)();
-    void (*uninitFunc)();
+    accurateTimerCb_t initFunc;
+    accurateTimerCb_t uninitFunc;
 } accurateTimerConfig_t;
 
 /*************************************************************************
@@ -45,13 +47,13 @@ bool accurateTimer_uninit();
 /************************* Function Description *************************/
 /**
  * @details accurateTimer_createTimer   Ask for a free instance of timer.
- * @param [in] callback A pointer to the function to call when the timer has expired.
+ * @param [in] callback A callback function called when the timer expires.
  *      WARNING: The callback is called in the same context as the function calling accurateTimer_incrementTimeBase() !
  *
  * @return A timer instance if there's one free, NULL otherwise.
  */
 /************************************************************************/
-accurateTimerHandle_t accurateTimer_createTimer(void (*callback)(accurateTimerHandle_t timerHandle));
+accurateTimerHandle_t accurateTimer_createTimer(accurateTimerExpired_t callback);
 
 /************************* Function Description *************************/
 /**

@@ -8,7 +8,7 @@
  ************************************************************************/
 typedef struct accurateTimer_t
 {
-    void (*callback)();
+    accurateTimerExpired_t callback;
     uint32_t targetTime;
     uint32_t startTime;
     bool isStarted;
@@ -68,7 +68,7 @@ bool accurateTimer_uninit()
     return true;
 }
 
-accurateTimerHandle_t accurateTimer_createTimer(void (*callback)(accurateTimerHandle_t timerHandle))
+accurateTimerHandle_t accurateTimer_createTimer(accurateTimerExpired_t callback)
 {
     accurateTimer_t *newTimer = NULL;
 
@@ -181,7 +181,7 @@ void accurateTimer_incrementTimeBase()
                 // Call the callback if not NULL
                 if(NULL != timerInstancesArray[i].callback)
                 {
-                    (*timerInstancesArray[i].callback)();
+                    (*timerInstancesArray[i].callback)(&timerInstancesArray[i]);
                 }
             }
         }
