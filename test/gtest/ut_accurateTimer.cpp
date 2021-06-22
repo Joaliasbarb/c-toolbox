@@ -77,16 +77,12 @@ TEST_F(AccurateTimerNoInitTest, UninitCallback)
 
 TEST_F(AccurateTimerTest, CreateTimerNullPointer)
 {
-    accurateTimerHandle_t timer = NULL;
-    timer = accurateTimer_createTimer(NULL);
-    EXPECT_TRUE(NULL == timer);
+    EXPECT_TRUE(NULL == accurateTimer_createTimer(NULL));
 }
 
 TEST_F(AccurateTimerTest, CreateTimer)
 {
-    accurateTimerHandle_t timer = NULL;
-    timer = accurateTimer_createTimer(timerCallback);
-    EXPECT_TRUE(NULL != timer);
+    EXPECT_TRUE(NULL != accurateTimer_createTimer(timerCallback));
 }
 
 TEST_F(AccurateTimerTest, CreateTimerTooMuch)
@@ -102,4 +98,20 @@ TEST_F(AccurateTimerTest, CreateTimerTooMuch)
 
     extraTimer = accurateTimer_createTimer(timerCallback);
     EXPECT_TRUE(NULL == extraTimer);
+}
+
+TEST_F(AccurateTimerTest, DeleteTimerNullPointer)
+{
+    EXPECT_FALSE(accurateTimer_deleteTimer(NULL));
+}
+
+TEST_F(AccurateTimerTest, DeleteTimer)
+{
+    accurateTimerHandle_t timer = NULL;
+
+    timer = accurateTimer_createTimer(timerCallback);
+    ASSERT_TRUE(NULL != timer);
+
+    EXPECT_TRUE(accurateTimer_deleteTimer(&timer));
+    EXPECT_TRUE(NULL == timer);
 }

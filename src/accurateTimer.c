@@ -34,7 +34,7 @@ static accurateTimer_t* getFirstFreeTimer();
  ************************************************************************/
 bool accurateTimer_init(const accurateTimerConfig_t * const config)
 {
-    if((NULL == config) | isInitialized)
+    if((NULL == config) || isInitialized)
     {
         return false;
     }
@@ -93,21 +93,22 @@ accurateTimerHandle_t accurateTimer_createTimer(void (*callback)(accurateTimerHa
     return (accurateTimerHandle_t) newTimer;
 }
 
-void accurateTimer_deleteTimer(accurateTimerHandle_t *timer)
+bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer)
 {
     accurateTimer_t *timerPointer = NULL;
 
     // Sanity check
-    if(NULL == *timer)
+    if((NULL == timer) || (NULL == *timer))
     {
-        return;
+        return false;
     }
 
     // Uninitialize the timer
     timerPointer = (accurateTimer_t *) *timer;
     timerPointer->isStarted = false;
     timerPointer->callback = NULL;
-    timerPointer = NULL;
+    *timer = NULL;
+    return true;
 }
 
 void accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, bool isPeriodic)

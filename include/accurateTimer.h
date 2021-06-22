@@ -55,16 +55,18 @@ accurateTimerHandle_t accurateTimer_createTimer(void (*callback)(accurateTimerHa
 
 /************************* Function Description *************************/
 /**
- * @details accurateTimer_deleteTimer   Delete a used timer.
+ * @details accurateTimer_deleteTimer   Delete a timer. If the call is successful, the timer handle is set to NULL.
  * @param [in] timer    A pointer to the timer to delete.
+ * @return true if the timer was successfuly deleted.
  */
 /************************************************************************/
-void accurateTimer_deleteTimer(accurateTimerHandle_t *timer);
+bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer);
 
 /************************* Function Description *************************/
 /**
  * @details accurateTimer_startTimer    Start a timer. This function can be called
  *      even if the timer is already started. In that case, the timer will be restarted.
+ * @param [in] timer    The timer to start.
  * @param [in] targetTime   The time in 1/16000s after which the timer shall expire.
  * @param [in] isPeriodic   Indicates whether the timer shall expire once (False) or periodically (True).
  */
