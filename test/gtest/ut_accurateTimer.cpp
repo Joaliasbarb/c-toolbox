@@ -5,8 +5,9 @@ static bool isInitCallbackCalled = false;
 static bool isUninitCallbackCalled = false;
 
 extern "C" {
-    static void initCallbackWrapper() { isInitCallbackCalled = true; }
-    static void uninitCallbackWrapper() { isUninitCallbackCalled = true; }
+    static void initCallback() { isInitCallbackCalled = true; }
+    static void uninitCallback() { isUninitCallbackCalled = true; }
+    static void timerCallback(accurateTimerHandle_t t) {}
 }
 
 class AccurateTimerNoInitTest : public ::testing::Test
@@ -50,7 +51,7 @@ TEST_F(AccurateTimerNoInitTest, InitNoCallback)
 TEST_F(AccurateTimerNoInitTest, InitCallback)
 {
     accurateTimerConfig_t cfg = { 0 };
-    cfg.initFunc = initCallbackWrapper;
+    cfg.initFunc = initCallback;
     EXPECT_TRUE(accurateTimer_init(&cfg));
     EXPECT_TRUE(isInitCallbackCalled);
     EXPECT_FALSE(accurateTimer_init(&cfg));
@@ -67,9 +68,38 @@ TEST_F(AccurateTimerNoInitTest, UninitNoCallback)
 TEST_F(AccurateTimerNoInitTest, UninitCallback)
 {
     accurateTimerConfig_t cfg = { 0 };
-    cfg.uninitFunc = uninitCallbackWrapper;
+    cfg.uninitFunc = uninitCallback;
     EXPECT_TRUE(accurateTimer_init(&cfg));
     EXPECT_TRUE(accurateTimer_uninit());
     EXPECT_TRUE(isUninitCallbackCalled);
     EXPECT_FALSE(accurateTimer_uninit());
+}
+
+TEST_F(AccurateTimerTest, CreateTimerNullPointer)
+{
+    accurateTimerHandle_t timer = NULL;
+    timer = accurateTimer_createTimer(NULL);
+    EXPECT_TRUE(NULL == timer);
+}
+
+TEST_F(AccurateTimerTest, CreateTimer)
+{
+    accurateTimerHandle_t timer = NULL;
+    timer = accurateTimer_createTimer(timerCallback);
+    EXPECT_TRUE(NULL != timer);
+}
+
+TEST_F(AccurateTimerTest, CreateTimerTooMuch)
+{
+    std::vector<accurateTimerHandle_t> timers{ MAX_ACCURATE_TIMER_COUNT , NULL};
+    accurateTimerHandle_t extraTimer = NULL;
+
+    for(size_t i = 0; i < MAX_ACCURATE_TIMER_COUNT; i++)
+    {
+        timers.at(i) = accurateTimer_createTimer(timerCallback);
+        EXPECT_TRUE(NULL != timers.at(i));
+    }
+
+    extraTimer = accurateTimer_createTimer(timerCallback);
+    EXPECT_TRUE(NULL == extraTimer);
 }

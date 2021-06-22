@@ -47,6 +47,7 @@ bool accurateTimer_init(const accurateTimerConfig_t * const config)
     }
 
     isInitialized = true;
+    return true;
 }
 
 bool accurateTimer_uninit()
