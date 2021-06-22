@@ -102,7 +102,10 @@ TEST_F(AccurateTimerTest, CreateTimerTooMuch)
 
 TEST_F(AccurateTimerTest, DeleteTimerNullPointer)
 {
+    accurateTimerHandle_t timer = NULL;
+
     EXPECT_FALSE(accurateTimer_deleteTimer(NULL));
+    EXPECT_FALSE(accurateTimer_deleteTimer(&timer));
 }
 
 TEST_F(AccurateTimerTest, DeleteTimer)
