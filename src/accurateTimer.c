@@ -27,6 +27,7 @@ static bool isInitialized = false;
  *********************** Local function declarations *********************
  ************************************************************************/
 static accurateTimer_t* getFirstFreeTimer();
+static void initTimer(accurateTimer_t * const timer);
 
 /*************************************************************************
  *********************** Public function definitions *********************
@@ -49,6 +50,12 @@ bool accurateTimer_uninit()
         return false;
     }
 
+    for(size_t i = 0; i < MAX_ACCURATE_TIMER_COUNT; i++)
+    {
+        initTimer(&timerInstancesArray[i]);
+    }
+
+    currentTime = 0;
     isInitialized = false;
     return true;
 }
@@ -90,8 +97,7 @@ bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer)
 
     // Uninitialize the timer
     timerPointer = (accurateTimer_t *) *timer;
-    timerPointer->isStarted = false;
-    timerPointer->callback = NULL;
+    initTimer(timerPointer);
     *timer = NULL;
     return true;
 }
@@ -195,4 +201,13 @@ static accurateTimer_t* getFirstFreeTimer()
     }
 
     return NULL;
+}
+
+static void initTimer(accurateTimer_t * const timer)
+{
+    timer->callback = NULL;
+    timer->isPeriodic = false;
+    timer->isStarted = false;
+    timer->startTime = 0;
+    timer->targetTime = 0;
 }
