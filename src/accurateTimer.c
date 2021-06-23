@@ -22,7 +22,6 @@ static accurateTimer_t timerInstancesArray[MAX_ACCURATE_TIMER_COUNT] = { {.callb
         .isPeriodic = false}};
 static uint32_t currentTime = 0;
 static bool isInitialized = false;
-static accurateTimerConfig_t cfg = {0};
 
 /*************************************************************************
  *********************** Local function declarations *********************
@@ -32,18 +31,11 @@ static accurateTimer_t* getFirstFreeTimer();
 /*************************************************************************
  *********************** Public function definitions *********************
  ************************************************************************/
-bool accurateTimer_init(const accurateTimerConfig_t * const config)
+bool accurateTimer_init()
 {
-    if((NULL == config) || isInitialized)
+    if(isInitialized)
     {
         return false;
-    }
-    
-    cfg = *config;
-
-    if(NULL != cfg.initFunc)
-    {
-        cfg.initFunc();
     }
 
     isInitialized = true;
@@ -57,13 +49,6 @@ bool accurateTimer_uninit()
         return false;
     }
 
-    if(NULL != cfg.uninitFunc)
-    {
-        cfg.uninitFunc();
-    }
-
-    cfg.initFunc = NULL;
-    cfg.uninitFunc = NULL;
     isInitialized = false;
     return true;
 }
@@ -73,7 +58,7 @@ accurateTimerHandle_t accurateTimer_createTimer(accurateTimerExpired_t callback)
     accurateTimer_t *newTimer = NULL;
 
     // Sanity check
-    if(NULL == callback)
+    if(!isInitialized || (NULL == callback))
     {
         return NULL;
     }
@@ -98,7 +83,7 @@ bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer)
     accurateTimer_t *timerPointer = NULL;
 
     // Sanity check
-    if((NULL == timer) || (NULL == *timer))
+    if(!isInitialized || (NULL == timer) || (NULL == *timer))
     {
         return false;
     }
@@ -116,7 +101,7 @@ bool accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, 
     accurateTimer_t *timerPointer = NULL;
 
     // Sanity check
-    if(NULL == timer)
+    if(!isInitialized || (NULL == timer))
     {
         return false;
     }
@@ -134,7 +119,7 @@ bool accurateTimer_stopTimer(accurateTimerHandle_t timer)
     accurateTimer_t *timerPointer = NULL;
 
     // Sanity check
-    if(NULL == timer)
+    if(!isInitialized || (NULL == timer))
     {
         return false;
     }
@@ -145,9 +130,15 @@ bool accurateTimer_stopTimer(accurateTimerHandle_t timer)
     return true;
 }
 
-void accurateTimer_incrementTimeBase()
+bool accurateTimer_incrementTimeBase()
 {
     uint32_t elapsedTime = 0;
+
+    // Sanity check
+    if(!isInitialized)
+    {
+        return false;
+    }
 
     // Increase time counter
     currentTime++;
@@ -187,6 +178,7 @@ void accurateTimer_incrementTimeBase()
             }
         }
     }
+    return true;
 }
 
 /*************************************************************************

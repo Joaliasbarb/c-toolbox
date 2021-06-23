@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 #include "accurateTimer.h"
 
-static bool isInitCallbackCalled = false;
-static bool isUninitCallbackCalled = false;
 static accurateTimerHandle_t expiredTimer = NULL;
 static int timerExpiredCount = 0;
 
 extern "C" {
-    static void initCallback() { isInitCallbackCalled = true; }
-    static void uninitCallback() { isUninitCallbackCalled = true; }
     static void timerCallback(accurateTimerHandle_t t)
     { 
         expiredTimer = t;
@@ -21,8 +17,6 @@ class AccurateTimerNoInitTest : public ::testing::Test
 public:
     AccurateTimerNoInitTest()
     {
-        isInitCallbackCalled = false;
-        isUninitCallbackCalled = false;
         expiredTimer = NULL;
         timerExpiredCount = 0;
     }
@@ -33,8 +27,7 @@ class AccurateTimerTest : public AccurateTimerNoInitTest
 public:
     AccurateTimerTest()
     {
-        accurateTimerConfig_t cfg = { 0 };
-        accurateTimer_init(&cfg);
+        accurateTimer_init();
     }
 
     virtual ~AccurateTimerTest()
@@ -43,42 +36,22 @@ public:
     }
 };
 
-TEST_F(AccurateTimerNoInitTest, InitNullPointer)
+TEST_F(AccurateTimerNoInitTest, InitTwice)
 {
-    EXPECT_FALSE(accurateTimer_init(NULL));
+    EXPECT_TRUE(accurateTimer_init());
+    EXPECT_FALSE(accurateTimer_init());
 }
 
-TEST_F(AccurateTimerNoInitTest, InitNoCallback)
+TEST_F(AccurateTimerNoInitTest, Uninit)
 {
-    accurateTimerConfig_t cfg = { 0 };
-    EXPECT_TRUE(accurateTimer_init(&cfg));
-    EXPECT_FALSE(isInitCallbackCalled);
-}
-
-TEST_F(AccurateTimerNoInitTest, InitCallback)
-{
-    accurateTimerConfig_t cfg = { 0 };
-    cfg.initFunc = initCallback;
-    EXPECT_TRUE(accurateTimer_init(&cfg));
-    EXPECT_TRUE(isInitCallbackCalled);
-    EXPECT_FALSE(accurateTimer_init(&cfg));
-}
-
-TEST_F(AccurateTimerNoInitTest, UninitNoCallback)
-{
-    accurateTimerConfig_t cfg = { 0 };
-    EXPECT_TRUE(accurateTimer_init(&cfg));
+    EXPECT_TRUE(accurateTimer_init());
     EXPECT_TRUE(accurateTimer_uninit());
-    EXPECT_FALSE(isUninitCallbackCalled);
 }
 
-TEST_F(AccurateTimerNoInitTest, UninitCallback)
+TEST_F(AccurateTimerNoInitTest, UninitTwice)
 {
-    accurateTimerConfig_t cfg = { 0 };
-    cfg.uninitFunc = uninitCallback;
-    EXPECT_TRUE(accurateTimer_init(&cfg));
+    EXPECT_TRUE(accurateTimer_init());
     EXPECT_TRUE(accurateTimer_uninit());
-    EXPECT_TRUE(isUninitCallbackCalled);
     EXPECT_FALSE(accurateTimer_uninit());
 }
 

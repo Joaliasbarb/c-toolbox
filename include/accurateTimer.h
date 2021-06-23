@@ -14,14 +14,7 @@ extern "C" {
  #define MAX_ACCURATE_TIMER_COUNT 5
  
 typedef void* accurateTimerHandle_t;
-typedef void (*accurateTimerCb_t)();
 typedef void (*accurateTimerExpired_t)(accurateTimerHandle_t timerHandle);
-
-typedef struct
-{
-    accurateTimerCb_t initFunc;
-    accurateTimerCb_t uninitFunc;
-} accurateTimerConfig_t;
 
 /*************************************************************************
  *********************** Public function declaration *********************
@@ -30,11 +23,10 @@ typedef struct
 /************************* Function Description *************************/
 /**
  * @details accurateTimer_init  Initialize the accurateTimer layer.
- * @param [in] config   A pointer to the config structure.
  * @return true if the initialization is successful, false otherwise.
  */
 /************************************************************************/
-bool accurateTimer_init(const accurateTimerConfig_t * const config);
+bool accurateTimer_init();
 
 /************************* Function Description *************************/
 /**
@@ -80,7 +72,7 @@ bool accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t tickCount, b
 /**
  * @details accurateTimer_stopTimer Stop a timer.
  * @param [in] timer    The timer to stop.
- * @return true if the timer is successfuly stopped.
+ * @return true if the timer is successfuly stopped, false otherwise.
  */
 /************************************************************************/
 bool accurateTimer_stopTimer(accurateTimerHandle_t timer);
@@ -89,9 +81,10 @@ bool accurateTimer_stopTimer(accurateTimerHandle_t timer);
 /**
  * @details accurateTimer_incrementTimeBase Increments the internal tick counter. This function shall
  *      be called at regular intervals so that a tick represent a fixed time span.
+ * @return true if the internal tick counter is successfuly incremented, false otherwise.
  */
 /************************************************************************/
-void accurateTimer_incrementTimeBase();
+bool accurateTimer_incrementTimeBase();
 
 #endif
 
