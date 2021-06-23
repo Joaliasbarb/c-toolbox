@@ -22,27 +22,11 @@ typedef void (*accurateTimerExpired_t)(accurateTimerHandle_t timerHandle);
 
 /************************* Function Description *************************/
 /**
- * @details accurateTimer_init  Initialize the accurateTimer layer.
- * @return true if the initialization is successful, false otherwise.
- */
-/************************************************************************/
-bool accurateTimer_init();
-
-/************************* Function Description *************************/
-/**
- * @details accurateTimer_uninit    Uninitialize the accurateTimer layer.
- * @return true if the uninitialization is successful, false otherwise.
- */
-/************************************************************************/
-bool accurateTimer_uninit();
-
-/************************* Function Description *************************/
-/**
  * @details accurateTimer_createTimer   Ask for a free instance of timer.
  * @param [in] callback A callback function called when the timer expires.
  *      WARNING: The callback is called in the same context as the function calling accurateTimer_incrementTimeBase() !
  *
- * @return A timer instance if there's one free, NULL otherwise.
+ * @return A timer instance if successful, NULL otherwise.
  */
 /************************************************************************/
 accurateTimerHandle_t accurateTimer_createTimer(accurateTimerExpired_t callback);
