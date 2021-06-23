@@ -55,6 +55,23 @@ TEST_F(AccurateTimerNoInitTest, UninitTwice)
     EXPECT_FALSE(accurateTimer_uninit());
 }
 
+TEST_F(AccurateTimerTest, UninitShouldDeleteAllTimers)
+{
+    std::vector<accurateTimerHandle_t> timers{ MAX_ACCURATE_TIMER_COUNT , NULL };
+    accurateTimerHandle_t extraTimer = NULL;
+
+    for(size_t i = 0; i < MAX_ACCURATE_TIMER_COUNT; i++)
+    {
+        timers.at(i) = accurateTimer_createTimer(timerCallback);
+        ASSERT_TRUE(NULL != timers.at(i));
+    }
+
+    EXPECT_TRUE(accurateTimer_uninit());
+    EXPECT_TRUE(accurateTimer_init());
+    extraTimer = accurateTimer_createTimer(timerCallback);
+    ASSERT_TRUE(NULL != extraTimer);
+}
+
 TEST_F(AccurateTimerTest, CreateTimerNullPointer)
 {
     EXPECT_TRUE(NULL == accurateTimer_createTimer(NULL));
