@@ -69,24 +69,26 @@ bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer);
  * @details accurateTimer_startTimer    Start a timer. This function can be called
  *      even if the timer is already started. In that case, the timer will be restarted.
  * @param [in] timer    The timer to start.
- * @param [in] targetTime   The time in 1/16000s after which the timer shall expire.
+ * @param [in] tickCount    The number of ticks after which the timer shall expire.
  * @param [in] isPeriodic   Indicates whether the timer shall expire once (False) or periodically (True).
  * @return true if the timer is successfuly started, false otherwise.
  */
 /************************************************************************/
-bool accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, bool isPeriodic);
+bool accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t tickCount, bool isPeriodic);
 
 /************************* Function Description *************************/
 /**
  * @details accurateTimer_stopTimer Stop a timer.
  * @param [in] timer    The timer to stop.
+ * @return true if the timer is successfuly stopped.
  */
 /************************************************************************/
-void accurateTimer_stopTimer(accurateTimerHandle_t timer);
+bool accurateTimer_stopTimer(accurateTimerHandle_t timer);
 
 /************************* Function Description *************************/
 /**
- * @details accurateTimer_incrementTimeBase This function shall be call regularly at 16kHz.
+ * @details accurateTimer_incrementTimeBase Increments the internal tick counter. This function shall
+ *      be called at regular intervals so that a tick represent a fixed time span.
  */
 /************************************************************************/
 void accurateTimer_incrementTimeBase();

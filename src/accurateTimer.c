@@ -129,19 +129,20 @@ bool accurateTimer_startTimer(accurateTimerHandle_t timer, uint32_t targetTime, 
     return true;
 }
 
-void accurateTimer_stopTimer(accurateTimerHandle_t timer)
+bool accurateTimer_stopTimer(accurateTimerHandle_t timer)
 {
     accurateTimer_t *timerPointer = NULL;
 
     // Sanity check
     if(NULL == timer)
     {
-        return;
+        return false;
     }
 
     timerPointer = (accurateTimer_t *) timer;
     timerPointer->isStarted = false;
     timerPointer->isPeriodic = false;
+    return true;
 }
 
 void accurateTimer_incrementTimeBase()
