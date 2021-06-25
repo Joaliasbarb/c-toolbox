@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "miscUtils.h"
 
-TEST(BigEndianBytesToVariableTest, ToUint64)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint64)
 {
     std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
     uint64_t result = 0;
@@ -10,7 +10,7 @@ TEST(BigEndianBytesToVariableTest, ToUint64)
     EXPECT_EQ(0x0123456789ABCDEF, result);
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint64NullPointer)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint64NullPointer)
 {
     std::vector<uint8_t> buffer { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
     uint64_t result = 0;
@@ -20,7 +20,7 @@ TEST(BigEndianBytesToVariableTest, ToUint64NullPointer)
     EXPECT_FALSE(miscUtils_bigEndianBytesToUint64(buffer.data(), NULL));
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint32)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint32)
 {
     std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67 };
     uint32_t result = 0;
@@ -29,7 +29,7 @@ TEST(BigEndianBytesToVariableTest, ToUint32)
     EXPECT_EQ(0x01234567, result);
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint32NullPointer)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint32NullPointer)
 {
     std::vector<uint8_t> buffer { 0x01, 0x23, 0x45, 0x67 };
     uint32_t result = 0;
@@ -39,7 +39,7 @@ TEST(BigEndianBytesToVariableTest, ToUint32NullPointer)
     EXPECT_FALSE(miscUtils_bigEndianBytesToUint32(buffer.data(), NULL));
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint24)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint24)
 {
     std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45};
     uint32_t result = 0;
@@ -48,7 +48,7 @@ TEST(BigEndianBytesToVariableTest, ToUint24)
     EXPECT_EQ(0x012345, result);
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint24NullPointer)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint24NullPointer)
 {
     std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45};
     uint32_t result = 0;
@@ -58,7 +58,7 @@ TEST(BigEndianBytesToVariableTest, ToUint24NullPointer)
     EXPECT_FALSE(miscUtils_bigEndianBytesToUint24(buffer.data(), NULL));
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint16)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint16)
 {
     std::vector<uint8_t> buffer{ 0x01, 0x23 };
     uint16_t result = 0;
@@ -67,7 +67,7 @@ TEST(BigEndianBytesToVariableTest, ToUint16)
     EXPECT_EQ(0x0123, result);
 }
 
-TEST(BigEndianBytesToVariableTest, ToUint16NullPointer)
+TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint16NullPointer)
 {
     std::vector<uint8_t> buffer { 0x01, 0x23 };
     uint16_t result = 0;
@@ -75,6 +75,82 @@ TEST(BigEndianBytesToVariableTest, ToUint16NullPointer)
     EXPECT_FALSE(miscUtils_bigEndianBytesToUint16(NULL, NULL));
     EXPECT_FALSE(miscUtils_bigEndianBytesToUint16(NULL, &result));
     EXPECT_FALSE(miscUtils_bigEndianBytesToUint16(buffer.data(), NULL));
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint64)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+    uint64_t result = 0;
+
+    EXPECT_TRUE(miscUtils_littleEndianBytesToUint64(buffer.data(), &result));
+    EXPECT_EQ(0xEFCDAB8967452301, result);
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint64NullPointer)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+    uint64_t result = 0;
+
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint64(NULL, NULL));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint64(NULL, &result));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint64(buffer.data(), NULL));
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint32)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67 };
+    uint32_t result = 0;
+
+    EXPECT_TRUE(miscUtils_littleEndianBytesToUint32(buffer.data(), &result));
+    EXPECT_EQ(0x67452301, result);
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint32NullPointer)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67 };
+    uint32_t result = 0;
+
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint32(NULL, NULL));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint32(NULL, &result));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint32(buffer.data(), NULL));
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint24)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45 };
+    uint32_t result = 0;
+
+    EXPECT_TRUE(miscUtils_littleEndianBytesToUint24(buffer.data(), &result));
+    EXPECT_EQ(0x452301, result);
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint24NullPointer)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23, 0x45, 0x67 };
+    uint32_t result = 0;
+
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint24(NULL, NULL));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint24(NULL, &result));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint24(buffer.data(), NULL));
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint16)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23 };
+    uint16_t result = 0;
+
+    EXPECT_TRUE(miscUtils_littleEndianBytesToUint16(buffer.data(), &result));
+    EXPECT_EQ(0x2301, result);
+}
+
+TEST(LittleEndianBytesToVariableTest, littleEndianBytesToUint16NullPointer)
+{
+    std::vector<uint8_t> buffer{ 0x01, 0x23 };
+    uint16_t result = 0;
+
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint16(NULL, NULL));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint16(NULL, &result));
+    EXPECT_FALSE(miscUtils_littleEndianBytesToUint16(buffer.data(), NULL));
 }
 
 TEST(ExtendSignBitTest, extendSignBit64)
@@ -192,3 +268,93 @@ TEST(ExtendSignBitTest, extendSignBit8InvalidInputs)
 
     EXPECT_FALSE(miscUtils_extendSignBit8(value, 5, NULL));
 }
+
+TEST(VariableToBigEndianBytes, uint64ToBigEndianBytes)
+{
+    uint64_t input = 0x0123456789ABCDEF;
+    uint8_t result[8] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+
+    EXPECT_TRUE(miscUtils_uint64ToBigEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint64ToBigEndianBytesNullPointer)
+{
+    uint64_t input = 0x0123456789ABCDEF;
+    uint8_t result[8] = { 0 };
+    std::vector<uint8_t> expectedResult(8, 0);
+
+    EXPECT_FALSE(miscUtils_uint64ToBigEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint32ToBigEndianBytes)
+{
+    uint32_t input = 0x01234567;
+    uint8_t result[4] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x01, 0x23, 0x45, 0x67 };
+
+    EXPECT_TRUE(miscUtils_uint32ToBigEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint32ToBigEndianBytesNullPointer)
+{
+    uint32_t input = 0x01234567;
+    uint8_t result[4] = { 0 };
+    std::vector<uint8_t> expectedResult(4, 0);
+
+    EXPECT_FALSE(miscUtils_uint32ToBigEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint24ToBigEndianBytes)
+{
+    uint32_t input = 0x012345;
+    uint8_t result[3] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x01, 0x23, 0x45 };
+
+    EXPECT_TRUE(miscUtils_uint24ToBigEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint24ToBigEndianBytesNullPointer)
+{
+    uint32_t input = 0x012345;
+    uint8_t result[3] = { 0 };
+    std::vector<uint8_t> expectedResult(3, 0);
+
+    EXPECT_FALSE(miscUtils_uint24ToBigEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint16ToBigEndianBytes)
+{
+    uint16_t input = 0x0123;
+    uint8_t result[2] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x01, 0x23 };
+
+    EXPECT_TRUE(miscUtils_uint16ToBigEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToBigEndianBytes, uint16ToBigEndianBytesNullPointer)
+{
+    uint16_t input = 0x0123;
+    uint8_t result[2] = { 0 };
+    std::vector<uint8_t> expectedResult(2, 0);
+
+    EXPECT_FALSE(miscUtils_uint16ToBigEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+//TEST(VariableToLittleEndianBytes, uint64ToLittleEndianBytes)
+//{
+//
+//}
+//
+//TEST(VariableToLittleEndianBytes, uint64ToLittleEndianBytesNullPointer)
+//{
+//
+//}
