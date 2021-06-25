@@ -428,3 +428,43 @@ TEST(VariableToLittleEndianBytes, uint16ToLittleEndianBytesNullPointer)
     EXPECT_FALSE(miscUtils_uint16ToLittleEndianBytes(input, NULL));
     EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
 }
+
+TEST(IsValueInRangeTest, isValueInRange)
+{
+    EXPECT_FALSE(miscUtils_isValueInRange(0, 1, 5));
+    EXPECT_TRUE(miscUtils_isValueInRange(1, 1, 5));
+    EXPECT_TRUE(miscUtils_isValueInRange(5, 1, 5));
+    EXPECT_FALSE(miscUtils_isValueInRange(6, 1, 5));
+}
+
+TEST(MinMaxMacrosTest, max)
+{
+    uint8_t value1 = 5;
+    uint16_t value2 = 50;
+    float value3 = 45.2;
+    double value4 = 80.6;
+
+    EXPECT_EQ(value2, MISC_UTILS_MAX(value1, value2));
+    EXPECT_EQ(value3, MISC_UTILS_MAX(value1, value3));
+    EXPECT_EQ(value4, MISC_UTILS_MAX(value1, value4));
+    EXPECT_EQ(value2, MISC_UTILS_MAX(value2, value1));
+    EXPECT_EQ(value2, MISC_UTILS_MAX(value3, value2));
+    EXPECT_EQ(value4, MISC_UTILS_MAX(value3, value4));
+    EXPECT_EQ(value4, MISC_UTILS_MAX(value4, value3));
+}
+
+TEST(MinMaxMacrosTest, min)
+{
+    uint8_t value1 = 5;
+    uint16_t value2 = 50;
+    float value3 = 45.2;
+    double value4 = 80.6;
+
+    EXPECT_EQ(value1, MISC_UTILS_MIN(value1, value2));
+    EXPECT_EQ(value1, MISC_UTILS_MIN(value1, value3));
+    EXPECT_EQ(value1, MISC_UTILS_MIN(value1, value4));
+    EXPECT_EQ(value1, MISC_UTILS_MIN(value2, value1));
+    EXPECT_EQ(value3, MISC_UTILS_MIN(value3, value2));
+    EXPECT_EQ(value3, MISC_UTILS_MIN(value3, value4));
+    EXPECT_EQ(value3, MISC_UTILS_MIN(value4, value3));
+}
