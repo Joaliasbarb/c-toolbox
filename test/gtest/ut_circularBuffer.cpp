@@ -79,6 +79,7 @@ TEST_F(CircularBufferTest, IsEmptyInitially)
 {
     EXPECT_EQ(cb_getItemCount(&testBuffer), 0) << "Buffer not empty after initialization.\n";
 }
+
 TEST_F(CircularBufferTest, PushBack)
 {
     std::vector<uint8_t> inputData{ 10, 25, 37, 43, 59 };

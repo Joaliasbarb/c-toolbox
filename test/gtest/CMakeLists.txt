@@ -35,3 +35,4 @@ endfunction()
 
 package_add_test(TESTNAME circularBufferTest FILES ut_circularBuffer.cpp LIBS cToolbox)
 package_add_test(TESTNAME accurateTimerTest FILES ut_accurateTimer.cpp LIBS cToolbox)
+package_add_test(TESTNAME miscUtilsTest FILES ut_miscUtils.cpp LIBS cToolbox)
