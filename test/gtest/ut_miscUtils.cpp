@@ -349,12 +349,82 @@ TEST(VariableToBigEndianBytes, uint16ToBigEndianBytesNullPointer)
     EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
 }
 
-//TEST(VariableToLittleEndianBytes, uint64ToLittleEndianBytes)
-//{
-//
-//}
-//
-//TEST(VariableToLittleEndianBytes, uint64ToLittleEndianBytesNullPointer)
-//{
-//
-//}
+TEST(VariableToLittleEndianBytes, uint64ToLittleEndianBytes)
+{
+    uint64_t input = 0x0123456789ABCDEF;
+    uint8_t result[8] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0xEF, 0xCD, 0xAB, 0x89, 0x67, 0x45, 0x23, 0x01 };
+
+    EXPECT_TRUE(miscUtils_uint64ToLittleEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint64ToLittleEndianBytesNullPointer)
+{
+    uint64_t input = 0x0123456789ABCDEF;
+    uint8_t result[8] = { 0 };
+    std::vector<uint8_t> expectedResult(8, 0);
+
+    EXPECT_FALSE(miscUtils_uint64ToLittleEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint32ToLittleEndianBytes)
+{
+    uint32_t input = 0x01234567;
+    uint8_t result[4] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x67, 0x45, 0x23, 0x01 };
+
+    EXPECT_TRUE(miscUtils_uint32ToLittleEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint32ToLittleEndianBytesNullPointer)
+{
+    uint32_t input = 0x01234567;
+    uint8_t result[4] = { 0 };
+    std::vector<uint8_t> expectedResult(4, 0);
+
+    EXPECT_FALSE(miscUtils_uint32ToLittleEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint24ToLittleEndianBytes)
+{
+    uint32_t input = 0x012345;
+    uint8_t result[3] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x45, 0x23, 0x01 };
+
+    EXPECT_TRUE(miscUtils_uint24ToLittleEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint24ToLittleEndianBytesNullPointer)
+{
+    uint32_t input = 0x012345;
+    uint8_t result[3] = { 0 };
+    std::vector<uint8_t> expectedResult(3, 0);
+
+    EXPECT_FALSE(miscUtils_uint24ToLittleEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint16ToLittleEndianBytes)
+{
+    uint16_t input = 0x0123;
+    uint8_t result[2] = { 0 };
+    std::vector<uint8_t> expectedResult{ 0x23, 0x01 };
+
+    EXPECT_TRUE(miscUtils_uint16ToLittleEndianBytes(input, result));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
+
+TEST(VariableToLittleEndianBytes, uint16ToLittleEndianBytesNullPointer)
+{
+    uint16_t input = 0x0123;
+    uint8_t result[2] = { 0 };
+    std::vector<uint8_t> expectedResult(2, 0);
+
+    EXPECT_FALSE(miscUtils_uint16ToLittleEndianBytes(input, NULL));
+    EXPECT_EQ(0, memcmp(expectedResult.data(), result, expectedResult.size()));
+}
