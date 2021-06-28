@@ -16,8 +16,7 @@ add_library(cToolbox STATIC
     "src/accurateTimer.c"
     "src/timerManager.c"
     "src/circularBuffer.c"
-    "src/miscUtils.c"
-    "src/quickSort.c")
+    "src/miscUtils.c")
 
 target_include_directories(cToolbox PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
