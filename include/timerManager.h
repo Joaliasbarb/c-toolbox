@@ -106,7 +106,7 @@ bool timerManager_stopTimer(timerHandle_t timer);
  * @return true if the internal tick counter is successfuly incremented, false otherwise.
  */
  /************************************************************************/
-void timerManager_incrementTimeBase();
+bool timerManager_incrementTimeBase();
 
 #endif
 

@@ -39,6 +39,7 @@ bool timerManager_init(timerLockCb_t lockCb)
     }
 
     requestLock = lockCb;
+    isInitialized = true;
     return true;
 }
 
@@ -57,7 +58,7 @@ bool timerManager_uninit()
 
 void timerManager_run()
 {
-    uint32_t time = getCurrentTime();
+    uint32_t time = 0;
     uint32_t elapsedTime = 0;
 
     if(!isInitialized)
@@ -65,6 +66,7 @@ void timerManager_run()
         return;
     }
 
+    time = getCurrentTime();
     // Iterate through all started timers
     for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
     {
@@ -173,18 +175,19 @@ bool timerManager_stopTimer(timerHandle_t timer)
     return true;
 }
 
-void timerManager_incrementTimeBase()
+bool timerManager_incrementTimeBase()
 {
     // Sanity check
     if(!isInitialized)
     {
-        return;
+        return false;
     }
 
     // Increment time
     requestLock(true, false);
     currentTime++;
     requestLock(false, false);
+    return true;
 }
 
 /*************************************************************************
