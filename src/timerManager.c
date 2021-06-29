@@ -5,7 +5,7 @@
  ************************************************************************/
 typedef struct timer_t
 {
-    void (*callback)();
+    timerExpired_t callback;
     uint32_t targetTime;
     uint32_t startTime;
     bool isStarted;
@@ -17,44 +17,53 @@ typedef struct timer_t
  ************************************************************************/
 static timer_t timerInstancesArray[MAX_TIMER_COUNT] = { {.callback = NULL, .targetTime = 0, .startTime = 0, .isStarted = false, .isPeriodic = false}};
 static volatile uint32_t currentTime = 0;
-static timerConfig_t cfg = {0};
+static timerLockCb_t requestLock;
+static bool isInitialized = false;
 
 /*************************************************************************
  *********************** Local function declarations *********************
  ************************************************************************/
 static timer_t* getFirstFreeTimer();
 static uint32_t getCurrentTime();
+static void initTimer(timer_t* const timer);
 
 /*************************************************************************
  *********************** Public function definitions *********************
  ************************************************************************/
-void timerManager_init(const timerConfig_t *const config)
+bool timerManager_init(timerLockCb_t lockCb)
 {
-    cfg = *config;
-
-    if(NULL != cfg.initFunc)
+    // Sanity check
+    if((NULL == lockCb) || isInitialized)
     {
-        cfg.initFunc();
+        return false;
     }
+
+    requestLock = lockCb;
+    return true;
 }
 
-void timerManager_uninit()
+bool timerManager_uninit()
 {
-    if(NULL == cfg.uninitFunc)
+    // Sanity check
+    if(!isInitialized)
     {
-        return;
+        return false;
     }
 
-    cfg.uninitFunc();
-    cfg.initFunc = NULL;
-    cfg.uninitFunc = NULL;
-    cfg.setInterrupt = NULL;
+    requestLock = NULL;
+    isInitialized = false;
+    return true;
 }
 
 void timerManager_run()
 {
     uint32_t time = getCurrentTime();
     uint32_t elapsedTime = 0;
+
+    if(!isInitialized)
+    {
+        return;
+    }
 
     // Iterate through all started timers
     for(size_t i = 0; i < MAX_TIMER_COUNT; i++)
@@ -76,7 +85,7 @@ void timerManager_run()
             {
                 if(timerInstancesArray[i].isPeriodic)
                 {
-                    timerInstancesArray[i].startTime = getCurrentTime();
+                    timerInstancesArray[i].startTime = time;
                 }
                 else
                 {
@@ -88,12 +97,12 @@ void timerManager_run()
     }
 }
 
-timerHandle_t timerManager_createTimer(void (*callback)(timerHandle_t))
+timerHandle_t timerManager_createTimer(timerExpired_t callback)
 {
     timer_t *newTimer = NULL;
 
     // Sanity check
-    if(NULL == callback)
+    if((NULL == callback) || !isInitialized)
     {
         return NULL;
     }
@@ -113,58 +122,69 @@ timerHandle_t timerManager_createTimer(void (*callback)(timerHandle_t))
     return (timerHandle_t) newTimer;
 }
 
-void timerManager_deleteTimer(timerHandle_t timer)
+bool timerManager_deleteTimer(timerHandle_t* timer)
 {
     timer_t *timerPointer = NULL;
 
     // Sanity check
-    if(NULL == timer)
+    if((NULL == timer) || (NULL == *timer) || !isInitialized)
     {
-        return;
+        return false;
     }
 
     // Uninitialize the timer
-    timerPointer = (timer_t*) timer;
-    timerPointer->callback = NULL;
-    timerPointer->isStarted = false;
+    timerPointer = (timer_t*) *timer;
+    initTimer(timerPointer);
+    *timer = NULL;
+    return true;
 }
 
-void timerManager_startTimer(timerHandle_t timer, uint32_t targetTime, bool isPeriodic)
+bool timerManager_startTimer(timerHandle_t timer, uint32_t tickCount, bool isPeriodic)
 {
     timer_t *timerPointer = NULL;
 
     // Sanity check
-    if(NULL == timer)
+    if((NULL == timer) || !isInitialized)
     {
-        return;
+        return false;
     }
 
     timerPointer = (timer_t*) timer;
     timerPointer->startTime = getCurrentTime();
-    timerPointer->targetTime = targetTime;
+    timerPointer->targetTime = tickCount;
     timerPointer->isStarted = true;
     timerPointer->isPeriodic = isPeriodic;
+    return true;
 }
 
-void timerManager_stopTimer(timerHandle_t timer)
+bool timerManager_stopTimer(timerHandle_t timer)
 {
     timer_t *timerPointer = NULL;
 
     // Sanity check
-    if(NULL == timer)
+    if((NULL == timer) || !isInitialized)
     {
-        return;
+        return false;
     }
 
     timerPointer = (timer_t*) timer;
     timerPointer->isStarted = false;
     timerPointer->isPeriodic = false;
+    return true;
 }
 
 void timerManager_incrementTimeBase()
 {
+    // Sanity check
+    if(!isInitialized)
+    {
+        return;
+    }
+
     // Increment time
+    requestLock(true, false);
     currentTime++;
+    requestLock(false, false);
 }
 
 /*************************************************************************
@@ -187,9 +207,18 @@ static uint32_t getCurrentTime()
 {
     uint32_t time = 0;
 
-    cfg.setInterrupt(false);
+    requestLock(true, true);
     time = currentTime;
-    cfg.setInterrupt(true);
+    requestLock(false, true);
 
     return time;
+}
+
+static void initTimer(timer_t * const timer)
+{
+    timer->callback = NULL;
+    timer->isPeriodic = false;
+    timer->isStarted = false;
+    timer->startTime = 0;
+    timer->targetTime = 0;
 }

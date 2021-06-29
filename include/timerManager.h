@@ -15,13 +15,8 @@ extern "C" {
 #define MAX_TIMER_COUNT    10
 
 typedef void* timerHandle_t;
-
-typedef struct
-{
-    void (*setInterrupt)(bool isEnable);
-    void (*initFunc)();
-    void (*uninitFunc)();
-} timerConfig_t;
+typedef void (*timerExpired_t)(timerHandle_t timerHandle);
+typedef void (*timerLockCb_t)(bool isLockRequested, bool isInRunContext);
 
 /*************************************************************************
  *************************** Macros definitions **************************
@@ -37,23 +32,30 @@ typedef struct
 
 /************************* Function Description *************************/
 /**
- * @details timerManager_init   Initialize the timeManager layer.
- * @param [in] config   A pointer to the config structure.
+ * @details timerManager_init   Initialize the timeManager layer. This function shall be
+ *      called before any other functions in this layer.
+ * @param [in] lockCb   A pointer to a function which shall implement a locking mechanism
+ *      to avoid concurrency on the internal tick counter. The concurrency is due to the timerManager_run
+ *      and timerManager_incrementTimeBase functions accessing the internal tick counter variable in a 
+ *      potentialy different context.
+ * @return true if the initialization is successful, false otherwise.
  */
 /************************************************************************/
-void timerManager_init(const timerConfig_t * const config);
+bool timerManager_init(timerLockCb_t lockCb);
 
 /************************* Function Description *************************/
 /**
- * @details timerManager_uninit Uninitialize the timeManager layer.
+ * @details timerManager_uninit Uninitialize the timeManager layer. This function doesn't delete
+ *      any timer and shall be called only at the end of the program execution.
+ * @return true if the uninitialization is successful, false otherwise.
  */
 /************************************************************************/
-void timerManager_uninit();
+bool timerManager_uninit();
 
 /************************* Function Description *************************/
 /**
- * @details timerManager_run    Main function of the timerManager layer.
- *                              Shall be called from the main loop.
+ * @details timerManager_run    Main function of the timerManager layer. This function checks if a
+        timer expired and call it's callback function if it did. Therefore, it shall be called regularly.
  */
 /************************************************************************/
 void timerManager_run();
@@ -66,39 +68,44 @@ void timerManager_run();
  * @return A timer instance if there's one free, NULL otherwise.
  */
 /************************************************************************/
-timerHandle_t timerManager_createTimer(void (*callback)(timerHandle_t));
+timerHandle_t timerManager_createTimer(timerExpired_t callback);
 
 /************************* Function Description *************************/
 /**
- * @details timerManager_deleteTimer    Delete a used timer.
- * @param [in] timer    The timer to delete.
+ * @details timerManager_deleteTimer    Delete a timer. If the call is successful, the timer handle is set to NULL.
+ * @param [in] timer    A pointer to the timer to delete.
+ * @return true if the timer is successfuly deleted, false otherwise.
  */
 /************************************************************************/
-void timerManager_deleteTimer(timerHandle_t timer);
+bool timerManager_deleteTimer(timerHandle_t *timer);
 
 /************************* Function Description *************************/
 /**
  * @details timerManager_startTimer Start a timer. This function can be called even if the timer is already started.
-                                    In that case, the timer will be restarted.
- * @param [in] targetTime   The time in [1/100s] after wich the timer shall expire.
- * @param [in] isPeriodic   Indicates whether the timer shall expire once (False) or periodically (True).
+ *      In that case, the timer will be restarted.
+ * @param [in] tickCount    The number of ticks after which the timer shall expire.
+ * @param [in] isPeriodic   Indicates whether the timer shall expire once (false) or periodically (true).
+ * @return true if the timer is successfuly started, false otherwise.
  */
 /************************************************************************/
-void timerManager_startTimer(timerHandle_t timer, uint32_t targetTime, bool isPeriodic);
+bool timerManager_startTimer(timerHandle_t timer, uint32_t tickCount, bool isPeriodic);
 
 /************************* Function Description *************************/
 /**
  * @details timerManager_stopTimer  Stop a timer.
  * @param [in] timer    The timer to stop.
+ * @return true if the timer is successfuly stopped, false otherwise.
  */
 /************************************************************************/
-void timerManager_stopTimer(timerHandle_t timer);
+bool timerManager_stopTimer(timerHandle_t timer);
 
 /************************* Function Description *************************/
 /**
- * @details timerManager_incrementTimeBase  This function shall be call regularly every 10 ms.
+ * @details timerManager_incrementTimeBase  Increments the internal tick counter. This function shall
+ *      be called at regular intervals so that a tick represent a fixed time span.
+ * @return true if the internal tick counter is successfuly incremented, false otherwise.
  */
-/************************************************************************/
+ /************************************************************************/
 void timerManager_incrementTimeBase();
 
 #endif

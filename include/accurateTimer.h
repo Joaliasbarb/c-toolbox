@@ -35,7 +35,7 @@ accurateTimerHandle_t accurateTimer_createTimer(accurateTimerExpired_t callback)
 /**
  * @details accurateTimer_deleteTimer   Delete a timer. If the call is successful, the timer handle is set to NULL.
  * @param [in] timer    A pointer to the timer to delete.
- * @return true if the timer is successfuly deleted.
+ * @return true if the timer is successfuly deleted, false otherwise.
  */
 /************************************************************************/
 bool accurateTimer_deleteTimer(accurateTimerHandle_t *timer);
