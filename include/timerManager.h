@@ -2,8 +2,8 @@
 extern "C" {
 #endif
 
-#ifndef __TIMER_MANAGER_H_
-#define __TIMER_MANAGER_H_
+#ifndef TIMER_MANAGER_H_
+#define TIMER_MANAGER_H_
 
 #include <stddef.h>
 #include <stdint.h>
