@@ -1,9 +1,9 @@
 #########################################
 #            VERSION MANAGEMENT         #
 #########################################
-set (c-toolbox_VERSION_NAME "Alpha01")
-set (c-toolbox_VERSION_MAJOR 0)
-set (c-toolbox_VERSION_MINOR 1)
+set (c-toolbox_VERSION_NAME "Release")
+set (c-toolbox_VERSION_MAJOR 1)
+set (c-toolbox_VERSION_MINOR 0)
 set (c-toolbox_VERSION_FIX 0)
 
 # the commit's SHA1, and whether the building workspace was dirty or not
