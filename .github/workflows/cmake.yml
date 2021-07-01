@@ -33,7 +33,7 @@ jobs:
       run: |
         curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
         unzip -o build-wrapper-linux-x86.zip
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir cfamily-output cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir ${{github.workspace}}/build/cfamily-output cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Test
       working-directory: ${{github.workspace}}/build
@@ -48,4 +48,4 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.cfamily.build-wrapper-output=cfamily-output
+          -Dsonar.cfamily.build-wrapper-output=${{github.workspace}}/build/cfamily-output
