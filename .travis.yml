@@ -6,9 +6,6 @@ branches:
   only:
   - master
   - develop
-  
-node_js:
-  - "10" 
     
 addons:
   sonarcloud:
@@ -32,4 +29,8 @@ script:
   - cmake -S . -B build/ -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - build-wrapper-linux-x86-64 --out-dir bw-output cmake --build build/ --config ${BUILD_TYPE}
   - cd build/ && ctest -C ${BUILD_TYPE} && cd ..
-  - sonar-scanner -Dsonar.cfamily.build-wrapper-output=bw-output
+  - sonar-scanner -X -Dsonar.cfamily.build-wrapper-output=bw-output
+  
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
