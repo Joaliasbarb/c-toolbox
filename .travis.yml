@@ -6,14 +6,14 @@ branches:
   only:
   - master
   - develop
+  
+node_js:
+  - "10" 
     
 addons:
   sonarcloud:
     organization: "joaliasbarb"
     token: ${SONAR_TOKEN}
-        
-node_js:
-  - "10"
         
 env:
   global:
