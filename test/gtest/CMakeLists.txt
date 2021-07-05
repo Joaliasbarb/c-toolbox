@@ -23,7 +23,7 @@ function(package_add_test)
     # link the Google test infrastructure, mocking library, and a default main function to
     # the test executable.  Remove g_test_main if writing your own main function.
     target_link_libraries(${INPUT_TESTNAME} PRIVATE gtest gmock gtest_main ${INPUT_LIBS})
-    target_link_libraries(${INPUT_TESTNAME} PRIVATE $<$<BOOL:${CODE_COVERAGE}>:gcov)
+    target_link_libraries(${INPUT_TESTNAME} PRIVATE "$<$<BOOL:${CODE_COVERAGE}>:gcov>")
     # gtest_discover_tests replaces gtest_add_tests,
     # see https://cmake.org/cmake/help/v3.10/module/GoogleTest.html for more options to pass to it
     gtest_discover_tests(${INPUT_TESTNAME}
