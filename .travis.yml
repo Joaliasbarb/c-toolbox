@@ -4,8 +4,7 @@ compiler:
     
 branches:
   only:
-  - master
-  - develop
+  - /.*/
     
 addons:
   sonarcloud:
