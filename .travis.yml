@@ -1,0 +1,17 @@
+sudo: require
+language: c
+compiler: gcc
+branches:
+    only:
+    - master
+    - develop
+    
+    
+job:
+    install:
+        - mkdir ~/build && cd build
+        
+    script:
+        - cmake -S ../ -B ./
+        - cmake --build -DCMAKE_BUILD_TYPE=Release
+  
