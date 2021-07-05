@@ -20,7 +20,7 @@ function(package_add_test)
 
     # create an exectuable in which the tests will be stored
     add_executable(${INPUT_TESTNAME} ${INPUT_FILES})
-    # link the Google test infrastructure, mocking library, and a default main fuction to
+    # link the Google test infrastructure, mocking library, and a default main function to
     # the test executable.  Remove g_test_main if writing your own main function.
     target_link_libraries(${INPUT_TESTNAME} gtest gmock gtest_main ${INPUT_LIBS})
     # gtest_discover_tests replaces gtest_add_tests,
@@ -30,7 +30,8 @@ function(package_add_test)
         WORKING_DIRECTORY ${PROJECT_DIR}
         PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
     )
-    set_target_properties(${INPUT_TESTNAME} PROPERTIES FOLDER test/gtest)
+    target_compile_options(${INPUT_TESTNAME} PRIVATE "$<$<BOOL:${CODE_COVERAGE}>:-g -O0 --coverage -ftest-coverage -fprofile-arcs>")
+    set_target_properties(${INPUT_TESTNAME} PROPERTIES FOLDER "test/gtest")
 endfunction()
 
 package_add_test(TESTNAME circularBufferTest FILES ut_circularBuffer.cpp LIBS cToolbox)
