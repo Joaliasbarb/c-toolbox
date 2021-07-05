@@ -7,18 +7,20 @@ branches:
     
     
 jobs:
+    before_install:
+        - BUILD_TYPE=Release
+    
     install:
         - mkdir -p build && cd build
         
         # Install latest cmake
         - |
             CMAKE_URL="https://cmake.org/files/v3.20/cmake-3.20.5-linux-x86_64.tar.gz"
-            mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-        - export PATH=${PWD}/cmake/bin:${PATH}
+            mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake | export PATH=${PWD}/cmake/bin:${PATH}
         - cmake --version
         
     script:
-        - pwd
-        - cmake -S .. -B .
-        - cmake --build -DCMAKE_BUILD_TYPE=Release
+        - cmake -S .. -B . -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+        - cmake --build . --config ${BUILD_TYPE}
+        - ctest -C ${BUILD_TYPE}
   
