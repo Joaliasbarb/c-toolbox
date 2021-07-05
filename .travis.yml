@@ -1,7 +1,7 @@
 language: c
 compiler:
     - gcc
-    - clang
+    
 branches:
     only:
     - master
@@ -10,8 +10,7 @@ branches:
 addons:
     sonarcloud:
         organization: "joaliasbarb"
-        token:
-            secure: ${SONAR_TOKEN}
+        token: ${SONAR_TOKEN}
         
 env:
     global:
