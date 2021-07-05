@@ -30,7 +30,7 @@ function(package_add_test)
         WORKING_DIRECTORY ${PROJECT_DIR}
         PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
     )
-    target_compile_options(${INPUT_TESTNAME} PRIVATE "$<$<BOOL:${CODE_COVERAGE}>:-g -O0 --coverage -ftest-coverage -fprofile-arcs>")
+    target_compile_options(${INPUT_TESTNAME} PRIVATE "$<$<BOOL:${CODE_COVERAGE}>:--coverage -ftest-coverage -fprofile-arcs>")
     set_target_properties(${INPUT_TESTNAME} PROPERTIES FOLDER "test/gtest")
 endfunction()
 
