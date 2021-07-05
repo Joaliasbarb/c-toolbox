@@ -17,9 +17,7 @@ env:
         - BUILD_TYPE=Release
     
 jobs:   
-    install:
-        - mkdir -p build && cd build
-        
+    install:       
         # Install latest cmake
         - |
             CMAKE_URL="https://cmake.org/files/v3.20/cmake-3.20.5-linux-x86_64.tar.gz"
@@ -28,8 +26,10 @@ jobs:
         - cmake --version
         
     script:
+        - mkdir -p build && cd build
         - cmake -S .. -B . -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
         - cmake --build . --config ${BUILD_TYPE}
         - ctest -C ${BUILD_TYPE}
+        - cd ..
         - sonar-scanner
   
