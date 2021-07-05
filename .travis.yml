@@ -1,35 +1,38 @@
 language: c
 compiler:
-    - gcc
+  - gcc
     
 branches:
-    only:
-    - master
-    - develop
+  only:
+  - master
+  - develop
     
 addons:
-    sonarcloud:
-        organization: "joaliasbarb"
-        token: ${SONAR_TOKEN}
+  sonarcloud:
+    organization: "joaliasbarb"
+    token: ${SONAR_TOKEN}
+        
+node_js:
+  - "10"
         
 env:
-    global:
-        - BUILD_TYPE=Release
+  global:
+    - BUILD_TYPE=Release
     
 jobs:   
-    install:       
-        # Install latest cmake
-        - |
-            CMAKE_URL="https://cmake.org/files/v3.20/cmake-3.20.5-linux-x86_64.tar.gz"
-            mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-        - export PATH=${PWD}/cmake/bin:${PATH}
-        - cmake --version
+  install:       
+    # Install latest cmake
+    - |
+        CMAKE_URL="https://cmake.org/files/v3.20/cmake-3.20.5-linux-x86_64.tar.gz"
+        mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+    - export PATH=${PWD}/cmake/bin:${PATH}
+    - cmake --version
         
-    script:
-        - mkdir -p build && cd build
-        - cmake -S .. -B . -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-        - cmake --build . --config ${BUILD_TYPE}
-        - ctest -C ${BUILD_TYPE}
-        - cd ..
-        - sonar-scanner
+  script:
+    - mkdir -p build && cd build
+    - cmake -S .. -B . -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+    - cmake --build . --config ${BUILD_TYPE}
+    - ctest -C ${BUILD_TYPE}
+    - cd ..
+    - sonar-scanner
   
