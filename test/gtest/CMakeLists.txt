@@ -22,7 +22,8 @@ function(package_add_test)
     add_executable(${INPUT_TESTNAME} ${INPUT_FILES})
     # link the Google test infrastructure, mocking library, and a default main function to
     # the test executable.  Remove g_test_main if writing your own main function.
-    target_link_libraries(${INPUT_TESTNAME} gtest gmock gtest_main ${INPUT_LIBS})
+    target_link_libraries(${INPUT_TESTNAME} PRIVATE gtest gmock gtest_main ${INPUT_LIBS})
+    target_link_libraries(${INPUT_TESTNAME} PRIVATE $<$<BOOL:${CODE_COVERAGE}>:gcov)
     # gtest_discover_tests replaces gtest_add_tests,
     # see https://cmake.org/cmake/help/v3.10/module/GoogleTest.html for more options to pass to it
     gtest_discover_tests(${INPUT_TESTNAME}
@@ -30,7 +31,7 @@ function(package_add_test)
         WORKING_DIRECTORY ${PROJECT_DIR}
         PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
     )
-    target_compile_options(${INPUT_TESTNAME} PRIVATE $<$<BOOL:${CODE_COVERAGE}>:-g --coverage -ftest-coverage -fprofile-arcs>)
+    target_compile_options(${INPUT_TESTNAME} PRIVATE $<$<BOOL:${CODE_COVERAGE}>:-g -ftest-coverage -fprofile-arcs>)
     set_target_properties(${INPUT_TESTNAME} PROPERTIES FOLDER "test/gtest")
 endfunction()
 
