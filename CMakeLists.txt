@@ -12,6 +12,8 @@ else()
 endif()
 option(BUILD_TESTS "Build the tests" ${BUILD_TEST_DEFAULT})
 cmake_dependent_option(CODE_COVERAGE "Enable code coverage" ON "BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX" OFF)
+message("BUILD_TESTS option is ${BUILD_TESTS}")
+message("CODE_COVERAGE option is ${CODE_COVERAGE}")
 
 add_library(cToolbox STATIC
     "src/accurateTimer.c"
