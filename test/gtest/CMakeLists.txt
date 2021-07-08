@@ -10,6 +10,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 include(GoogleTest)
+include(CTest)
 
 function(package_add_test)
     # Input arguments parsing

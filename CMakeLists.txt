@@ -24,7 +24,7 @@ add_library(cToolbox STATIC
 target_include_directories(cToolbox PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
 if(BUILD_TESTS)
-    enable_testing()
+	enable_testing()
     add_subdirectory("test/gtest")
 endif()
 
