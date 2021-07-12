@@ -20,8 +20,6 @@ function(package_add_test)
     cmake_parse_arguments(INPUT "${options}" "${oneValueArgs}" "${multValueArgs}" ${ARGN})
 
     # create an exectuable in which the tests will be stored
-	message("INPUT_SOURCES: " ${INPUT_SOURCES})
-	message("INPUT_INCLUDES: " ${INPUT_INCLUDES})
     add_executable(${INPUT_TESTNAME} ${INPUT_SOURCES})
 	target_include_directories(${INPUT_TESTNAME} PRIVATE ${INPUT_INCLUDES})
     # link the Google test infrastructure, mocking library, and a default main function to
@@ -33,7 +31,6 @@ function(package_add_test)
     gtest_discover_tests(${INPUT_TESTNAME}
         # set a working directory to your project root so that you can find test data via paths relative to the project root
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     )
     target_compile_options(${INPUT_TESTNAME} PRIVATE $<$<BOOL:${CODE_COVERAGE}>:-g -ftest-coverage -fprofile-arcs>)
     set_target_properties(${INPUT_TESTNAME} PROPERTIES FOLDER "test/gtest")
