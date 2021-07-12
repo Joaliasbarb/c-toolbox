@@ -21,7 +21,7 @@ add_library(cToolbox STATIC
     "src/circularBuffer.c"
     "src/miscUtils.c")
 
-target_include_directories(cToolbox PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_include_directories(cToolbox PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 if(BUILD_TESTS)
 	enable_testing()
