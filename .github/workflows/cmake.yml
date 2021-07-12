@@ -10,10 +10,6 @@ on:
       - master
       - develop
   workflow_dispatch:
-    branches:
-      - master
-      - develop
-      - test
 
 jobs:
   buildAndTest:
