@@ -440,34 +440,24 @@ TEST(IsValueInRangeTest, isValueInRange)
 
 TEST(MinMaxMacrosTest, max)
 {
-    uint8_t value1 = 5;
-    uint16_t value2 = 50;
-    float value3 = 45.2;
-    double value4 = 80.6;
-
-    EXPECT_EQ(value2, MISC_UTILS_MAX(value1, value2));
-    EXPECT_EQ(value3, MISC_UTILS_MAX(value1, value3));
-    EXPECT_EQ(value4, MISC_UTILS_MAX(value1, value4));
-    EXPECT_EQ(value2, MISC_UTILS_MAX(value2, value1));
-    EXPECT_EQ(value2, MISC_UTILS_MAX(value3, value2));
-    EXPECT_EQ(value4, MISC_UTILS_MAX(value3, value4));
-    EXPECT_EQ(value4, MISC_UTILS_MAX(value4, value3));
+    EXPECT_EQ(50, MISC_UTILS_MAX(5, 50));
+    EXPECT_EQ(45.2, MISC_UTILS_MAX(5, 45.2));
+    EXPECT_EQ(80.6, MISC_UTILS_MAX(5, 80.6));
+    EXPECT_EQ(50, MISC_UTILS_MAX(50, 5));
+    EXPECT_EQ(50, MISC_UTILS_MAX(45.2, 50));
+    EXPECT_EQ(80.6, MISC_UTILS_MAX(45.2, 80.6));
+    EXPECT_EQ(80.6, MISC_UTILS_MAX(80.6, 45.2));
 }
 
 TEST(MinMaxMacrosTest, min)
 {
-    uint8_t value1 = 5;
-    uint16_t value2 = 50;
-    float value3 = 45.2;
-    double value4 = 80.6;
-
-    EXPECT_EQ(value1, MISC_UTILS_MIN(value1, value2));
-    EXPECT_EQ(value1, MISC_UTILS_MIN(value1, value3));
-    EXPECT_EQ(value1, MISC_UTILS_MIN(value1, value4));
-    EXPECT_EQ(value1, MISC_UTILS_MIN(value2, value1));
-    EXPECT_EQ(value3, MISC_UTILS_MIN(value3, value2));
-    EXPECT_EQ(value3, MISC_UTILS_MIN(value3, value4));
-    EXPECT_EQ(value3, MISC_UTILS_MIN(value4, value3));
+    EXPECT_EQ(5, MISC_UTILS_MIN(5, 50));
+    EXPECT_EQ(5, MISC_UTILS_MIN(5, 45.2));
+    EXPECT_EQ(5, MISC_UTILS_MIN(5, 80.6));
+    EXPECT_EQ(5, MISC_UTILS_MIN(50, 5));
+    EXPECT_EQ(45.2, MISC_UTILS_MIN(45.2, 50));
+    EXPECT_EQ(45.2, MISC_UTILS_MIN(45.2, 80.6));
+    EXPECT_EQ(45.2, MISC_UTILS_MIN(80.6, 45.2));
 }
 
 TEST(IsPowerOf2Test, isPowerOf2)
