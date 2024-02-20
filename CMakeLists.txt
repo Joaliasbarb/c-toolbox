@@ -17,9 +17,10 @@ message("CODE_COVERAGE option is ${CODE_COVERAGE}")
 
 add_library(cToolbox STATIC
     "src/accurateTimer.c"
-    "src/timerManager.c"
     "src/circularBuffer.c"
-    "src/miscUtils.c")
+    "src/miscUtils.c"
+    "src/timerManager.c"
+    "src/streamBuffer.c")
 
 target_include_directories(cToolbox PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
