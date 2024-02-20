@@ -1,4 +1,5 @@
 *.user
+.vscode/
 build/
 .vs/
 CMakeSettings.json

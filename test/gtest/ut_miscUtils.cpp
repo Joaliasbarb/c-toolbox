@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <limits>
 #include "miscUtils.h"
 
 TEST(BigEndianBytesToVariableTest, bigEndianBytesToUint64)
@@ -467,4 +468,11 @@ TEST(MinMaxMacrosTest, min)
     EXPECT_EQ(value3, MISC_UTILS_MIN(value3, value2));
     EXPECT_EQ(value3, MISC_UTILS_MIN(value3, value4));
     EXPECT_EQ(value3, MISC_UTILS_MIN(value4, value3));
+}
+
+TEST(IsPowerOf2Test, isPowerOf2)
+{
+    EXPECT_FALSE(miscUtils_isPowerOf2(0));
+    EXPECT_FALSE(miscUtils_isPowerOf2(1));
+    EXPECT_TRUE(miscUtils_isPowerOf2(2));
 }

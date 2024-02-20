@@ -256,6 +256,15 @@ bool miscUtils_uint16ToLittleEndianBytes(uint16_t value, uint8_t * const bytes);
 /************************************************************************/
 bool miscUtils_isValueInRange(const uint32_t value, const uint32_t minValue, const uint32_t maxValue);
 
+/************************* Function Description *************************/
+/**
+ * @details miscUtils_isPowerOf2    Check if a value is a power of 2.
+ * @param [in] value    The value to check.
+ * @return  true if the value is a power of two (0 not included), false otherwise.
+ */
+/************************************************************************/
+bool miscUtils_isPowerOf2(size_t value);
+
 #endif
 
 #ifdef __cplusplus

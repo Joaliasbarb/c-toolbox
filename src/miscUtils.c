@@ -329,6 +329,11 @@ bool miscUtils_isValueInRange(const uint32_t value, const uint32_t minValue, con
     return (minValue <= value && value <= maxValue) ? true : false;
 }
 
+bool miscUtils_isPowerOf2(size_t value)
+{
+    return (value > 1) && ((value & (value - 1)) == 0);
+}
+
 /*************************************************************************
  *********************** Local function definitions **********************
  ************************************************************************/
