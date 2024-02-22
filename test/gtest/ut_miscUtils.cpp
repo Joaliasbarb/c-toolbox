@@ -463,6 +463,7 @@ TEST(MinMaxMacrosTest, min)
 TEST(IsPowerOf2Test, isPowerOf2)
 {
     EXPECT_FALSE(miscUtils_isPowerOf2(0));
-    EXPECT_FALSE(miscUtils_isPowerOf2(1));
+    EXPECT_TRUE(miscUtils_isPowerOf2(1));
     EXPECT_TRUE(miscUtils_isPowerOf2(2));
+    EXPECT_FALSE(miscUtils_isPowerOf2(3));
 }

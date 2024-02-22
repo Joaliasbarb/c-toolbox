@@ -35,6 +35,11 @@ extern "C" {
  ************************************************************************/
 #define MISC_UTILS_MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MISC_UTILS_MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MISC_UTILS_CLAMP(val, low, high) \
+    (((val) <= (low)) ? (low) : MISC_UTILS_MIN(val, high))
+#define MISC_UTILS_IN_RANGE(val, min, mac) ((val) >= (min) && (val) <= (max))
+#define MISC_UTILS_IS_POWER_OF_TWO(x) (((x) != 0U) && (((x) & ((x) - 1U)) == 0U))
+#define MISC_UTILS_BUILD_ASSERT(cond) ((void)sizeof(char[1 - 2*!!(condition)]))
 
 /*************************************************************************
  *********************** Public function declaration *********************
