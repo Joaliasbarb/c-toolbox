@@ -18,6 +18,7 @@ message("CODE_COVERAGE option is ${CODE_COVERAGE}")
 add_library(cToolbox STATIC
     "src/accurateTimer.c"
     "src/circularBuffer.c"
+    "src/crcUtils.c"
     "src/miscUtils.c"
     "src/timerManager.c"
     "src/streamBuffer.c")
